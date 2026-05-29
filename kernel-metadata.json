@@ -1,5 +1,5 @@
 {
-  "id": "migueladesousa/bone-tumor-yolo-training",
+  "id": "migueladesousa/bone-tumor-yolo-training-notebook",
   "title": "Bone Tumor YOLO Training",
   "code_file": "train_pipeline.ipynb",
   "language": "python",
