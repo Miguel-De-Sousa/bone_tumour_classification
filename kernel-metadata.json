@@ -1,0 +1,14 @@
+{
+  "id": "migueladesousa/bone-tumor-yolo-training",
+  "title": "Bone Tumor YOLO Training",
+  "code_file": "train_pipeline.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": ["hazemalaa14/bone-tumor-x-ray-for-yolo-object-detection"],
+  "kernel_sources": [],
+  "competition_sources": []
+}
