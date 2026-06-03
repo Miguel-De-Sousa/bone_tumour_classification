@@ -1,6 +1,0 @@
-path: /kaggle/input/bone-tumor-x-ray-for-yolo-object-detection
-train: images/train
-val: images/val
-
-nc: 9
-names: ['giant cell tumor', 'multiple osteochondromas', 'osteochondroma', 'osteofibroma', 'osteosarcoma', 'other bt', 'other mt', 'simple bone cyst', 'synovial osteochondroma']

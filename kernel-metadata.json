@@ -1,14 +1,13 @@
 {
-  "id": "migueladesousa/bone-tumor-yolo-training-notebook",
-  "title": "Bone Tumor YOLO Training Notebook",
+  "id": "migueladesousa/bone-tumour-training",
+  "title": "Bone Tumour Training",
   "code_file": "train_pipeline.ipynb",
   "language": "python",
   "kernel_type": "notebook",
   "is_private": "true",
   "enable_gpu": "true",
-  "enable_tpu": "false",
   "enable_internet": "true",
-  "dataset_sources": ["hazemalaa14/bone-tumor-x-ray-for-yolo-object-detection"],
-  "kernel_sources": [],
-  "competition_sources": []
+  "dataset_sources": ["migueladesousa/bone-tumour-classification"],
+  "competition_sources": [],
+  "kernel_sources": []
 }
