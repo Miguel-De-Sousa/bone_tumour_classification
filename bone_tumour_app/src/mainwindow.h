@@ -17,9 +17,14 @@ public:
 
 private slots:
     void uploadButton_clicked(); 
+    void denyButton_clicked();
 
 private:
     QPushButton *uploadButton;
+    QPushButton *acceptButton;
+    QPushButton *denyButton;
+    QLabel *titleLabel;
+    QLabel *decisionLabel;
     QComboBox *comboBox;
     QStackedWidget *stackedWidget;
     QLabel *imageDisplayLabel;
