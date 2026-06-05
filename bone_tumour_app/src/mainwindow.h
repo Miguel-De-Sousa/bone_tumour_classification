@@ -5,7 +5,7 @@
 #include <QPushButton>
 #include <QComboBox>
 #include <QStackedWidget>
-#include <QTextEdit>
+#include <QLabel>
 
 class MainWindow : public QMainWindow
 {
@@ -22,7 +22,7 @@ private:
     QPushButton *uploadButton;
     QComboBox *comboBox;
     QStackedWidget *stackedWidget;
-    QTextEdit *textEditPage2;
+    QLabel *imageDisplayLabel;
 };
 
 #endif 
