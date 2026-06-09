@@ -24,10 +24,13 @@ private:
     QPushButton *acceptButton;
     QPushButton *denyButton;
     QLabel *titleLabel;
+    QLabel *supportLabel;
+    QLabel *dragdropLabel;
     QLabel *decisionLabel;
+    QLabel *imageDisplayLabel;
     QComboBox *comboBox;
     QStackedWidget *stackedWidget;
-    QLabel *imageDisplayLabel;
+    
 };
 
 #endif 

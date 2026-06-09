@@ -12,19 +12,43 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    resize(800,600);
+    this->resize(800,600);
+    this->setFixedSize(800, 600);
+    this->setWindowTitle("Analysis Suite");
+    this->setStyleSheet("background-color: #FFFFFF;");
 
     titleLabel = new QLabel("X-Ray Analysis Suite", this);
-    titleLabel->setStyleSheet("font-size: 24px; font-weight: bold; color: white;");
+    titleLabel->setStyleSheet("font-size: 20px; font-weight: bold; color: #010101;");
     titleLabel->setAlignment(Qt::AlignCenter);
 
-    uploadButton = new QPushButton("Upload X-Ray", this);
+    dragdropLabel = new QLabel(this);
+    dragdropLabel->setText(
+    "<p align='center'>"
+    "  <img src='/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/drag-and-drop.png' width='48' height='48'>"
+    "</p>"
+    "<p align='center' style='font-size: 14px; margin-top: 10px; color: #555555;'>"
+    "  Drag & Drop <span style='color: #2B76E3; text-decoration: underline;'>X-Ray file</span>"
+    "</p>"
+    );
+    dragdropLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    dragdropLabel->setAlignment(Qt::AlignCenter);
+    dragdropLabel->setStyleSheet(R"(
+        background-color: #F1F6FE;
+        color: #555555; 
+        border: 2px dashed #2B76E3;
+        border-radius: 8px;
+        )");
+
+    supportLabel = new QLabel("Supported formats: PNG, JPG, JPEG", this);
+    supportLabel->setStyleSheet("color: #555555; ");
+
+    uploadButton = new QPushButton(" Upload", this);
     uploadButton->setIcon(QIcon("/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/downloads.png"));
     uploadButton->setIconSize(QSize(16,16));
     uploadButton->setFixedSize(200, 45);
     uploadButton->setStyleSheet(R"(
         QPushButton{
-            background-color: #0076FF;
+            background-color: #2B76E3;
             color: #FFFFFF;
             font-family: "Segoe UI", Arial;    
             font-size: 14px;
@@ -43,13 +67,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     decisionLabel = new QLabel("Analyse X-Ray Scan:", this);
     decisionLabel->setStyleSheet("font-size: 14px; font-weight: bold; color: white;");
-    decisionLabel->setVisible(false);
     
     acceptButton = new QPushButton(this);
     acceptButton->setIcon(QIcon("/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/check.png"));
     acceptButton->setIconSize(QSize(16,16));
     acceptButton->setFixedSize(200, 45);
-    acceptButton->setVisible(false);
     acceptButton->setStyleSheet(R"(
     QPushButton {
         background-color: #28A745;
@@ -72,7 +94,6 @@ MainWindow::MainWindow(QWidget *parent)
     denyButton->setIcon(QIcon("/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/cross.png"));
     denyButton->setIconSize(QSize(16,16));
     denyButton->setFixedSize(200, 45);
-    denyButton->setVisible(false);
     denyButton->setStyleSheet(R"(
     QPushButton {
         background-color: #DC3545;
@@ -100,14 +121,21 @@ MainWindow::MainWindow(QWidget *parent)
 
     QWidget *page1 = new QWidget();
     QVBoxLayout *page1Layout = new QVBoxLayout(page1);
-    page1Layout->addWidget(uploadButton); 
+    page1Layout->addWidget(titleLabel);
+    page1Layout->addWidget(comboBox);
+    page1Layout->addWidget(dragdropLabel);
+    page1Layout->addWidget(supportLabel);
+    page1Layout->addWidget(uploadButton, 0, Qt::AlignRight); 
+    page1Layout->setSpacing(20);
     page1Layout->setAlignment(Qt::AlignCenter);
 
     QWidget *page2 = new QWidget();
-    page2->setStyleSheet("background-color: black");
     QVBoxLayout *page2Layout = new QVBoxLayout(page2);
     page2Layout->addWidget(imageDisplayLabel); 
     page2Layout->setAlignment(Qt::AlignCenter);
+    page2Layout->addWidget(decisionLabel);
+    page2Layout->addWidget(acceptButton);
+    page2Layout->addWidget(denyButton);
 
     stackedWidget = new QStackedWidget(this);
     stackedWidget->addWidget(page1);
@@ -115,19 +143,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     QWidget *centralWidget = new QWidget(this);
     QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
-    QHBoxLayout *navBarLayout =  new QHBoxLayout();
-    QHBoxLayout *footerBarLayout = new QHBoxLayout();
 
-    navBarLayout->addWidget(titleLabel);
-    navBarLayout->addWidget(comboBox);
-
-    footerBarLayout->addWidget(decisionLabel);
-    footerBarLayout->addWidget(acceptButton);
-    footerBarLayout->addWidget(denyButton);
-
-    mainLayout->addLayout(navBarLayout);
     mainLayout->addWidget(stackedWidget);
-    mainLayout->addLayout(footerBarLayout);
     
     setCentralWidget(centralWidget);
 
@@ -159,17 +176,9 @@ void MainWindow::uploadButton_clicked()
     int h = stackedWidget->height();
     imageDisplayLabel->setPixmap(medicalImage.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
-    acceptButton->setVisible(true);
-    denyButton->setVisible(true);
-    decisionLabel->setVisible(true);
-    titleLabel->setVisible(false);
     comboBox->setCurrentIndex(1);
 }
 void MainWindow::denyButton_clicked()
 {
     comboBox->setCurrentIndex(0);
-    acceptButton->setVisible(false);
-    denyButton->setVisible(false);
-    decisionLabel->setVisible(false);
-    titleLabel->setVisible(true);
 }
