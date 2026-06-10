@@ -23,10 +23,8 @@ private:
     QPushButton *uploadButton;
     QPushButton *acceptButton;
     QPushButton *denyButton;
-    QLabel *titleLabel;
-    QLabel *supportLabel;
+    QPushButton *infoButton;
     QLabel *dragdropLabel;
-    QLabel *decisionLabel;
     QLabel *imageDisplayLabel;
     QComboBox *comboBox;
     QStackedWidget *stackedWidget;

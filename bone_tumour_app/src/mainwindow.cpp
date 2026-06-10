@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowTitle("Analysis Suite");
     this->setStyleSheet("background-color: #FFFFFF;");
 
-    titleLabel = new QLabel("X-Ray Analysis Suite", this);
+    QLabel *titleLabel = new QLabel("X-Ray Analysis Suite", this);
     titleLabel->setStyleSheet("font-size: 20px; font-weight: bold; color: #010101;");
     titleLabel->setAlignment(Qt::AlignCenter);
 
@@ -39,8 +39,28 @@ MainWindow::MainWindow(QWidget *parent)
         border-radius: 8px;
         )");
 
-    supportLabel = new QLabel("Supported formats: PNG, JPG, JPEG", this);
+    QLabel *supportLabel = new QLabel("Supported formats: PNG, JPG, JPEG", this);
     supportLabel->setStyleSheet("color: #555555; ");
+
+    infoButton = new QPushButton(" Model Information", this);
+    infoButton->setIcon(QIcon("/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/info.png"));
+    infoButton->setIconSize(QSize(16,16));
+    infoButton->setFixedWidth(150);
+    infoButton->setStyleSheet(R"(
+    QPushButton {
+        background-color: #FFFFFF;
+        color: #555555;    
+        border: none;                   
+        border-radius: 8px;                 
+        padding: 10px 10px;
+    }
+    QPushButton:hover {
+        background-color: #F5F5F5; 
+    }
+    QPushButton:pressed {
+        background-color: #EAEAEA;          
+    }
+    )");
 
     uploadButton = new QPushButton(" Upload", this);
     uploadButton->setIcon(QIcon("/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/downloads.png"));
@@ -58,57 +78,56 @@ MainWindow::MainWindow(QWidget *parent)
             padding: 10px 24px;
         }
         QPushButton:hover{
-            background-color: #0056B3;
+            background-color: #1A62CD;
         }
         QPushButton:pressed {
-            background-color: #003D80;          
+            background-color: #154FA5;          
         }
     )");
-
-    decisionLabel = new QLabel("Analyse X-Ray Scan:", this);
-    decisionLabel->setStyleSheet("font-size: 14px; font-weight: bold; color: white;");
     
-    acceptButton = new QPushButton(this);
-    acceptButton->setIcon(QIcon("/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/check.png"));
+    acceptButton = new QPushButton("Proceed: Accept File ", this);
+    acceptButton->setIcon(QIcon("/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/angle-right.png"));
     acceptButton->setIconSize(QSize(16,16));
-    acceptButton->setFixedSize(200, 45);
+    acceptButton->setFixedSize(220, 45);
+    acceptButton->setLayoutDirection(Qt::RightToLeft);
     acceptButton->setStyleSheet(R"(
     QPushButton {
-        background-color: #28A745;
+        background-color: #2B76E3;
         color: #FFFFFF;
-        font-family: 'Segoe UI', Arial;
+        font-family: "Segoe UI", Arial, sans-serif;    
         font-size: 14px;
-        font-weight: bold;
-        border: 1px solid transparent;
-        border-radius: 6px;
+        font-weight: bold;                    
+        border-radius: 8px;               
+        padding: 10px 28px; 
     }
     QPushButton:hover {
-        background-color: #218838;
+        background-color: #1A62CD; 
     }
     QPushButton:pressed {
-        background-color: #1E7E34;
+        background-color: #154FA5;          
     }
     )");
 
-    denyButton = new QPushButton(this);
-    denyButton->setIcon(QIcon("/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/cross.png"));
+    denyButton = new QPushButton("Return: File Selection ", this);
+    denyButton->setIcon(QIcon("/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/refresh.png"));
     denyButton->setIconSize(QSize(16,16));
-    denyButton->setFixedSize(200, 45);
+    denyButton->setFixedSize(220, 45);
+    denyButton->setLayoutDirection(Qt::RightToLeft);
     denyButton->setStyleSheet(R"(
     QPushButton {
-        background-color: #DC3545;
-        color: #FFFFFF;
-        font-family: 'Segoe UI', Arial;
+        background-color: #FFFFFF;
+        color: #555555; 
+        font-family: "Segoe UI", Arial, sans-serif;    
         font-size: 14px;
-        font-weight: bold;
-        border: 1px solid transparent;
-        border-radius: 6px;
+        border: 1px solid #CCCCCC;                   
+        border-radius: 8px;                 
+        padding: 10px 28px;
     }
     QPushButton:hover {
-        background-color: #C82333;
+        background-color: #F5F5F5; 
     }
     QPushButton:pressed {
-        background-color: #BD2130;
+        background-color: #EAEAEA;          
     }
     )");
 
@@ -118,24 +137,35 @@ MainWindow::MainWindow(QWidget *parent)
     comboBox->setFixedSize(0, 0);
 
     imageDisplayLabel = new QLabel(this);
+    imageDisplayLabel->setStyleSheet("background-color: #000000; border-radius: 8px;");
+    imageDisplayLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    imageDisplayLabel->setAlignment(Qt::AlignCenter);
 
     QWidget *page1 = new QWidget();
     QVBoxLayout *page1Layout = new QVBoxLayout(page1);
+    QHBoxLayout *page1supportLayout = new QHBoxLayout(page1);
+    page1supportLayout->addWidget(supportLabel);
+    page1supportLayout->addWidget(infoButton, Qt::AlignRight);
+
     page1Layout->addWidget(titleLabel);
+    page1Layout->addSpacing(10);
     page1Layout->addWidget(comboBox);
     page1Layout->addWidget(dragdropLabel);
-    page1Layout->addWidget(supportLabel);
+    page1Layout->addLayout(page1supportLayout);
+    page1Layout->addSpacing(20);
     page1Layout->addWidget(uploadButton, 0, Qt::AlignRight); 
-    page1Layout->setSpacing(20);
     page1Layout->setAlignment(Qt::AlignCenter);
 
     QWidget *page2 = new QWidget();
     QVBoxLayout *page2Layout = new QVBoxLayout(page2);
-    page2Layout->addWidget(imageDisplayLabel); 
+    QHBoxLayout *page2decisionLayout = new QHBoxLayout(page2);
+
+    page2decisionLayout->addWidget(acceptButton);
+    page2decisionLayout->addWidget(denyButton);
+    
+    page2Layout->addWidget(imageDisplayLabel);
+    page2Layout->addLayout(page2decisionLayout);
     page2Layout->setAlignment(Qt::AlignCenter);
-    page2Layout->addWidget(decisionLabel);
-    page2Layout->addWidget(acceptButton);
-    page2Layout->addWidget(denyButton);
 
     stackedWidget = new QStackedWidget(this);
     stackedWidget->addWidget(page1);
