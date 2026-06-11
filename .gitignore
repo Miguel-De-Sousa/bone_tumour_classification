@@ -35,7 +35,9 @@ CMakeFiles/
 CMakeSettings.json
 CMakeUserPresets.json
 generated/
+external/
 
 .vscode/
 
 .DS_Store
+
