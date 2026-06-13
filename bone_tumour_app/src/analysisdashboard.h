@@ -17,6 +17,9 @@ public:
     ~MainWindow();
 
 private slots:
+    void setupUIComponents();
+    void setupPages();
+    void setupConnections();
     void uploadButton_clicked(); 
     void acceptButton_clicked();
     void denyButton_clicked();
@@ -29,6 +32,8 @@ private:
     QPushButton *infoButton;
     QPushButton *restartButton;
     QPushButton *exitButton;
+    QLabel *titleLabel;
+    QLabel *supportLabel;
     QLabel *dragdropLabel;
     QLabel *imageDisplayLabel;
     QLabel *imageFinalLabel;

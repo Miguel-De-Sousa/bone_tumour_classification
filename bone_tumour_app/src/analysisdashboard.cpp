@@ -10,14 +10,25 @@
 #include <QMenuBar>
 #include <QFrame>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 {
     this->setFixedSize(800, 600);
     this->setWindowTitle("Analysis Suite");
     this->setStyleSheet("background-color: #F8F9FA;");
 
-    QLabel *titleLabel = new QLabel("X-Ray Analysis Suite", this);
+    setupUIComponents();
+    setupPages();
+    setupConnections();
+
+    if (!classifier.loadModel("bonetumour_model.onnx")){
+        QMessageBox::critical(this, tr("Error"), tr("AI Model failed to load"));
+    };
+
+}
+
+void MainWindow::setupUIComponents()
+{
+    titleLabel = new QLabel("X-Ray Analysis Suite", this);
     titleLabel->setStyleSheet("font-size: 20px; font-weight: bold; color: #010101;");
     titleLabel->setAlignment(Qt::AlignCenter);
 
@@ -39,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
         border-radius: 8px;
         )");
 
-    QLabel *supportLabel = new QLabel("Supported formats: PNG, JPG, JPEG", this);
+    supportLabel = new QLabel("Supported formats: PNG, JPG, JPEG", this);
     supportLabel->setStyleSheet("color: #555555; ");
 
     infoButton = new QPushButton(" Model Information", this);
@@ -83,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent)
             background-color: #154FA5;          
         }
     )");
-    
+
     acceptButton = new QPushButton("Proceed: Accept File ", this);
     acceptButton->setIcon(QIcon("/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/angle-right.png"));
     acceptButton->setIconSize(QSize(16,16));
@@ -128,17 +139,11 @@ MainWindow::MainWindow(QWidget *parent)
     }
     )");
 
-    comboBox = new QComboBox(this);
-    comboBox->addItem("Page 1");
-    comboBox->addItem("Page 2");
-    comboBox->addItem("Page 3");
-    comboBox->setFixedSize(0, 0);
-
     imageDisplayLabel = new QLabel(this);
     imageDisplayLabel->setStyleSheet("background-color: #111111; border-radius: 12px; border: 1px solid #E0E0E0;");
     imageDisplayLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     imageDisplayLabel->setAlignment(Qt::AlignCenter);
-    
+
     imageFinalLabel = new QLabel(this);
     imageFinalLabel->setStyleSheet("background-color: #111111; border-radius: 12px; border: 1px solid #E0E0E0;");
     imageFinalLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
@@ -186,6 +191,16 @@ MainWindow::MainWindow(QWidget *parent)
         QPushButton:hover { background-color: #F5F5F5; }
         QPushButton:pressed { background-color: #EAEAEA; }
     )");
+
+}
+
+void MainWindow::setupPages()
+{
+    comboBox = new QComboBox(this);
+    comboBox->addItem("Page 1");
+    comboBox->addItem("Page 2");
+    comboBox->addItem("Page 3");
+    comboBox->setFixedSize(0, 0);
 
     QWidget *page1 = new QWidget();
     QVBoxLayout *page1Layout = new QVBoxLayout(page1);
@@ -331,6 +346,10 @@ MainWindow::MainWindow(QWidget *parent)
     
     setCentralWidget(centralWidget);
 
+}
+
+void MainWindow::setupConnections()
+{
     connect(comboBox, &QComboBox::currentIndexChanged,
             stackedWidget, &QStackedWidget::setCurrentIndex);
     connect(acceptButton, &QPushButton::clicked, this, &MainWindow::acceptButton_clicked);
@@ -338,10 +357,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(uploadButton, &QPushButton::clicked, this, &MainWindow::uploadButton_clicked);
     connect(restartButton, &QPushButton::clicked, this, &MainWindow::denyButton_clicked);
     connect(exitButton, &QPushButton::clicked, this, &MainWindow::close);
-
-    if (!classifier.loadModel("bonetumour_model.onnx")){
-        QMessageBox::critical(this, tr("Error"), tr("AI Model failed to load"));
-    };
 }
 
 MainWindow::~MainWindow(){}
