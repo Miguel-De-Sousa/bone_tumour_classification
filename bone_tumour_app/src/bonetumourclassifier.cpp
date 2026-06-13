@@ -1,21 +1,28 @@
 #include "bonetumourclassifier.h"
-#include <cmath>
+#include <algorithm>
+#include <QImage>
+#include <QRgb>
 
-BoneTumourClassifier::BoneTumourClassifier() : env(ORT_LOGGING_LEVEL_WARNING, "BoneTumourClassifier") {}
+// Constructor initializes the core ONNX Runtime Environment
+BoneTumourClassifier::BoneTumourClassifier() 
+    : env(ORT_LOGGING_LEVEL_WARNING, "BoneTumourClassifier") {}
+
+// Destructor is handled automatically by std::unique_ptr
 BoneTumourClassifier::~BoneTumourClassifier() {}
 
-bool BoneTumourClassifier::loadModel(const QString& modelPath){
-    #ifdef _WIN32 //Check for path on Windows platforms
+bool BoneTumourClassifier::loadModel(const QString& modelPath) {
+    #ifdef _WIN32 // Check for path configuration on Windows platforms
         std::wstring wPath = modelPath.toStdWString();
         const wchar_t* path = wPath.c_str();
-    #else
+    #else // macOS and Linux handling
         std::string sPath = modelPath.toStdString();
         const char* path = sPath.c_str();
     #endif
 
     try {
         Ort::SessionOptions sessionOptions;
-        sessionOptions.SetIntraOpNumThreads(1);
+        sessionOptions.SetIntraOpNumThreads(1); // Restrict to a single background thread
+    
         session = std::make_unique<Ort::Session>(env, path, sessionOptions);
         return true;
     } 
@@ -24,60 +31,103 @@ bool BoneTumourClassifier::loadModel(const QString& modelPath){
     }
 }
 
-ModelResult BoneTumourClassifier::predict(const QString& imagePath) {
-    ModelResult result { false, 0.0f, "Error running" };
-    if (!session) return result;
-
-    QImage img(imagePath);
-    if (img.isNull()) return result;
-
-    QImage scaledImg = img.scaled(224, 224, Qt::IgnoreAspectRatio).convertToFormat(QImage::Format_RGB888);
-    std::vector<float> inputTensorValues(1 * 3 * 224 * 224);
-
-    int channelStride = 224 * 224;
-    for (int y = 0; y < 224; ++y) {
-        for (int x = 0; x < 224; ++x) {
-            QRgb pixel = scaledImg.pixel(x, y);
-            float r = qRed(pixel) / 255.0f;
-            float g = qGreen(pixel) / 255.0f;
-            float b = qBlue(pixel) / 255.0f;
-
-            int pixelOffset = (y * 224) + x;
-            inputTensorValues[0 * channelStride + pixelOffset] = r;
-            inputTensorValues[1 * channelStride + pixelOffset] = g;
-            inputTensorValues[2 * channelStride + pixelOffset] = b;
-        }
-    }
-
-    std::array<int64_t, 4> inputShape = {1, 3, 224, 224};
-    Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
-    Ort::Value inputTensor = Ort::Value::CreateTensor<float>(memoryInfo, inputTensorValues.data(), inputTensorValues.size(), inputShape.data(), inputShape.size());
-
-    const char* inputNames[] = {"images"};
-    const char* outputNames[] = {"output0"};
+DetectionResult BoneTumourClassifier::predict(const QString& imagePath) {
+    DetectionResult result;
+    result.success = false;
 
     try {
-        auto outputTensors = session->Run(Ort::RunOptions{nullptr}, inputNames, &inputTensor, 1, outputNames, 1);
-        float* rawOutputScores = outputTensors.front().GetTensorMutableData<float>();
-
-        float exp_b = std::exp(rawOutputScores[0]);
-        float exp_m = std::exp(rawOutputScores[1]);
-        float sum = exp_b + exp_m;
-
-        float benignPercentage = (exp_b / sum) * 100.0f;
-        float malignantPercentage = (exp_m / sum) * 100.0f;
-
-        if (malignantPercentage > 50.0f) {
-            result.isMalignant = true;
-            result.confidence = malignantPercentage;
-            result.displayString = QString("Prediction: MALIGNANT\nConfidence: %1%").arg(malignantPercentage, 0, 'f', 1);
-        } else {
-            result.isMalignant = false;
-            result.confidence = benignPercentage;
-            result.displayString = QString("Prediction: BENIGN\nConfidence: %1%").arg(benignPercentage, 0, 'f', 1);
+        QImage img(imagePath);
+        if (img.isNull()) {
+            result.success = false;
+            result.errorMessage = "Failed to load image file from disk.";
+            return result;
         }
+
+        int modelWidth = 1024;
+        int modelHeight = 1024;
+        QImage scaledImg = img.scaled(modelWidth, modelHeight, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+        // Convert to standard 32-bit RGB format
+        scaledImg = scaledImg.convertToFormat(QImage::Format_RGB32);
+
+        std::vector<float> inputTensorValues(1 * 3 * modelWidth * modelHeight);
+
+        // Extract raw pixels and normalise values from 0-255 down to 0.0-1.0
+        for (int y = 0; y < modelHeight; ++y) {
+            for (int x = 0; x < modelWidth; ++x) {
+                QRgb pixel = scaledImg.pixel(x, y);
+                
+                int r = y * modelWidth + x;
+                int g = modelWidth * modelHeight + r;
+                int b = 2 * modelWidth * modelHeight + r;
+
+                inputTensorValues[r] = qRed(pixel) / 255.0f;
+                inputTensorValues[g] = qGreen(pixel) / 255.0f;
+                inputTensorValues[b] = qBlue(pixel) / 255.0f;
+            }
+        }
+
+        std::vector<int64_t> inputShape = {1, 3, modelWidth, modelHeight};
+        Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
+        
+        Ort::Value inputTensor = Ort::Value::CreateTensor<float>(
+            memoryInfo, 
+            inputTensorValues.data(), 
+            inputTensorValues.size(), 
+            inputShape.data(), 
+            inputShape.size()
+        );
+
+        const char* inputNames[] = {"images"};
+        const char* outputNames[] = {"output0"};
+
+        auto outputTensors = session->Run(Ort::RunOptions{nullptr}, inputNames, &inputTensor, 1, outputNames, 1);
+
+        float* outputData = outputTensors[0].GetTensorMutableData<float>();
+        auto outputInfo = outputTensors[0].GetTensorTypeAndShapeInfo();
+        std::vector<int64_t> outputShape = outputInfo.GetShape(); 
+
+        int numAttributes = outputShape[1];
+        int numCandidates = outputShape[2];
+
+        int bestClassId = -1;
+        float highestScore = 0.0f;
+
+        for (int i = 0; i < numCandidates; ++i) {
+            for (int classId = 0; classId < 9; ++classId) {
+                int dataIndex = (4 + classId) * numCandidates + i;
+                float score = outputData[dataIndex];
+
+                if (score > highestScore) {
+                    highestScore = score;
+                    bestClassId = classId;
+                }
+            }
+        }
+
+        if (bestClassId != -1 && highestScore > 0.25f) {
+            result.className = classNames[bestClassId];
+            result.confidence = highestScore;
+
+            if (result.className == "Osteosarcoma" || result.className == "Other Malignant Tumor") {
+                result.severity = "Malignant";
+            } else if (result.className == "Giant Cell Tumor") {
+                result.severity = "Aggressive Benign";
+            } else {
+                result.severity = "Benign";
+            }
+            result.success = true;
+        } else {
+            result.className = "No Tumor Detected";
+            result.severity = "Clear";
+            result.confidence = 0.0f;
+            result.success = true;
+        }
+
+    } catch (const std::exception& e) {
+        result.success = false;
+        result.errorMessage = QString("Model detection failure: %1").arg(e.what());
     }
-    catch (...) {}
 
     return result;
 }

@@ -1,26 +1,31 @@
 #include <QString>
-#include <QImage>
+#include <vector>
 #include <memory>
 #include <onnxruntime_cxx_api.h>
 
-struct ModelResult 
-{
-    bool isMalignant;
+struct DetectionResult {
+    QString className;
     float confidence;
-    QString displayString;
+    QString severity; 
+    bool success;
+    QString errorMessage;
 };
 
-class BoneTumourClassifier
-{
+class BoneTumourClassifier {
 public:
     BoneTumourClassifier();
     ~BoneTumourClassifier();
 
     bool loadModel(const QString& modelPath);
-    ModelResult predict(const QString& imagePath);
+    DetectionResult predict(const QString& imagePath);
 
 private:
-    //Create onnx runtime environment
-    Ort::Env env;
     std::unique_ptr<Ort::Session> session;
+    Ort::Env env;
+
+    const std::vector<QString> classNames = {
+        "Giant Cell Tumor", "Multiple Osteochondromas", "Osteochondroma",
+        "Osteofibroma", "Osteosarcoma", "Other Benign Tumor",
+        "Other Malignant Tumor", "Simple Bone Cyst", "Synovial Osteochondroma"
+    };
 };

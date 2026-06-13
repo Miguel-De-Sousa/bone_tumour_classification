@@ -27,12 +27,17 @@ private:
     QPushButton *acceptButton;
     QPushButton *denyButton;
     QPushButton *infoButton;
+    QPushButton *restartButton;
+    QPushButton *exitButton;
     QLabel *dragdropLabel;
     QLabel *imageDisplayLabel;
-    QLabel *resultsLabel;
+    QLabel *imageFinalLabel;
+    QLabel *tumourNameLabel;
+    QLabel *severityLabel;
+    QLabel *confidenceLabel;
     QComboBox *comboBox;
     QStackedWidget *stackedWidget;
-    
+    QString filePath;
 };
 
 #endif 
