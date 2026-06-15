@@ -109,16 +109,16 @@ DetectionResult BoneTumourClassifier::predict(const QString& imagePath) {
             result.className = classNames[bestClassId];
             result.confidence = highestScore;
 
-            if (result.className == "Osteosarcoma" || result.className == "Other Malignant Tumor") {
+            if (result.className == "Osteosarcoma" || result.className == "Other Malignant Tumour") {
                 result.severity = "Malignant";
-            } else if (result.className == "Giant Cell Tumor") {
+            } else if (result.className == "Giant Cell Tumour") {
                 result.severity = "Aggressive Benign";
             } else {
                 result.severity = "Benign";
             }
             result.success = true;
         } else {
-            result.className = "No Tumor Detected";
+            result.className = "No Tumour Detected";
             result.severity = "Clear";
             result.confidence = 0.0f;
             result.success = true;

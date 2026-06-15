@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QStackedWidget>
 #include <QLabel>
+#include <QMessageBox>
 #include "bonetumourclassifier.h"
 
 class MainWindow : public QMainWindow
@@ -43,6 +44,7 @@ private:
     QComboBox *comboBox;
     QStackedWidget *stackedWidget;
     QString filePath;
+    QMessageBox *infoMessageBox;
 };
 
 #endif 

@@ -24,8 +24,8 @@ private:
     Ort::Env env;
 
     const std::vector<QString> classNames = {
-        "Giant Cell Tumor", "Multiple Osteochondromas", "Osteochondroma",
-        "Osteofibroma", "Osteosarcoma", "Other Benign Tumor",
-        "Other Malignant Tumor", "Simple Bone Cyst", "Synovial Osteochondroma"
+        "Giant Cell Tumour", "Multiple Osteochondromas", "Osteochondroma",
+        "Osteofibroma", "Osteosarcoma", "Other Benign Tumour",
+        "Other Malignant Tumour", "Simple Bone Cyst", "Synovial Osteochondroma"
     };
 };

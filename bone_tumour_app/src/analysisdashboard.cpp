@@ -73,6 +73,23 @@ void MainWindow::setupUIComponents()
     }
     )");
 
+    infoMessageBox = new QMessageBox(this);
+    infoMessageBox->setWindowTitle("Model Information");
+    infoMessageBox->setText(
+        "<h3 style='color: #1A202C; margin-bottom: 4px; font-size: 16px;'>YOLOv8 Bone Tumour Classifier</h3>"
+        "<p style='color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;'>Onnx Runtime Model</p>"
+        "<hr style='border: none; background-color: #E5E9F0; height: 1px; margin-bottom: 12px;'/>"
+        "<p style='color: #555555; font-size: 13px; line-height: 18px;'>"
+        "This suite executes computer vision classification using a deep learning model trained on publicly avaliable bone tumour data via Kaggle.<br><br>"
+        "<b>Supported Types:</b> <ul> <li>Giant Cell Tumour</li> <li>Osteochondroma</li> <li>Osteosarcoma</li><li>Osteofibroma</li><li>Other Benign Tumour</li><li>Other Malignant Tumour</li>"
+        "</p>"
+        "<hr style='border: none; background-color: #E5E9F0; height: 1px; margin-bottom: 12px;'/>");
+    infoMessageBox->setIconPixmap(QIcon("/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/info.png").pixmap(32, 32));
+
+    QPushButton *closeBtn = infoMessageBox->addButton("Acknowledge", QMessageBox::AcceptRole);
+    closeBtn->setStyleSheet("background-color: #2B76E3;");
+    closeBtn->setFixedSize(120, 36);
+
     uploadButton = new QPushButton(" Upload", this);
     uploadButton->setIcon(QIcon("/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/downloads.png"));
     uploadButton->setIconSize(QSize(16,16));
@@ -95,10 +112,9 @@ void MainWindow::setupUIComponents()
         }
     )");
 
-    acceptButton = new QPushButton("Proceed: Accept File ", this);
+    acceptButton = new QPushButton(" Accept File ", this);
     acceptButton->setIcon(QIcon("/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/angle-right.png"));
     acceptButton->setIconSize(QSize(16,16));
-    acceptButton->setFixedSize(220, 45);
     acceptButton->setLayoutDirection(Qt::RightToLeft);
     acceptButton->setStyleSheet(R"(
     QPushButton {
@@ -117,11 +133,9 @@ void MainWindow::setupUIComponents()
     }
     )");
 
-    denyButton = new QPushButton("Return: File Selection ", this);
+    denyButton = new QPushButton(" File Selection ", this);
     denyButton->setIcon(QIcon("/Users/miguel/GitHub/bone_tumour_classification/bone_tumour_app/assets/refresh.png"));
     denyButton->setIconSize(QSize(16,16));
-    denyButton->setFixedSize(220, 45);
-    denyButton->setLayoutDirection(Qt::RightToLeft);
     denyButton->setStyleSheet(R"(
     QPushButton {
         background-color: #FFFFFF;
@@ -140,12 +154,12 @@ void MainWindow::setupUIComponents()
     )");
 
     imageDisplayLabel = new QLabel(this);
-    imageDisplayLabel->setStyleSheet("background-color: #111111; border-radius: 12px; border: 1px solid #E0E0E0;");
+    imageDisplayLabel->setStyleSheet("background-color: #000000; border-radius: 12px; border: 1px solid #E0E0E0;");
     imageDisplayLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     imageDisplayLabel->setAlignment(Qt::AlignCenter);
 
     imageFinalLabel = new QLabel(this);
-    imageFinalLabel->setStyleSheet("background-color: #111111; border-radius: 12px; border: 1px solid #E0E0E0;");
+    imageFinalLabel->setStyleSheet("background-color: #000000; border-radius: 12px; border: 1px solid #E0E0E0;");
     imageFinalLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     imageFinalLabel->setAlignment(Qt::AlignCenter);
 
@@ -350,6 +364,7 @@ void MainWindow::setupPages()
 
 void MainWindow::setupConnections()
 {
+    connect(infoButton, &QPushButton::clicked, infoMessageBox, &QMessageBox::exec);
     connect(comboBox, &QComboBox::currentIndexChanged,
             stackedWidget, &QStackedWidget::setCurrentIndex);
     connect(acceptButton, &QPushButton::clicked, this, &MainWindow::acceptButton_clicked);
@@ -378,8 +393,8 @@ void MainWindow::uploadButton_clicked()
 
     int w = stackedWidget->width();
     int h = stackedWidget->height();
-    imageDisplayLabel->setPixmap(medicalImage.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    imageFinalLabel->setPixmap(medicalImage.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    imageDisplayLabel->setPixmap(medicalImage.scaled(w - 100, h - 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    imageFinalLabel->setPixmap(medicalImage.scaled(w - 100, h - 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
     comboBox->setCurrentIndex(1);
 }
