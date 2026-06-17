@@ -91,6 +91,7 @@ DetectionResult BoneTumourClassifier::predict(const QString& imagePath) {
         int numCandidates = outputShape[2];
 
         int bestClassId = -1;
+        int bestCandidateIndex = -1;
         float highestScore = 0.0f;
 
         for (int i = 0; i < numCandidates; ++i) {
@@ -101,6 +102,7 @@ DetectionResult BoneTumourClassifier::predict(const QString& imagePath) {
                 if (score > highestScore) {
                     highestScore = score;
                     bestClassId = classId;
+                    bestCandidateIndex = i;
                 }
             }
         }
@@ -108,6 +110,24 @@ DetectionResult BoneTumourClassifier::predict(const QString& imagePath) {
         if (bestClassId != -1 && highestScore > 0.25f) {
             result.className = classNames[bestClassId];
             result.confidence = highestScore;
+
+            float cx = outputData[0 * numCandidates + bestCandidateIndex];
+            float cy = outputData[1 * numCandidates + bestCandidateIndex];
+            float w  = outputData[2 * numCandidates + bestCandidateIndex];
+            float h  = outputData[3 * numCandidates + bestCandidateIndex];
+
+            float scaleX = static_cast<float>(img.width()) / modelWidth;
+            float scaleY = static_cast<float>(img.height()) / modelHeight;
+
+            cx *= scaleX;
+            cy *= scaleY;
+            w  *= scaleX;
+            h  *= scaleY;
+
+            int topLeftX = static_cast<int>(cx - (w / 2.0f));
+            int topLeftY = static_cast<int>(cy - (h / 2.0f));
+
+            result.boundingBox = QRect(topLeftX, topLeftY, static_cast<int>(w), static_cast<int>(h));
 
             if (result.className == "Osteosarcoma" || result.className == "Other Malignant Tumour") {
                 result.severity = "Malignant";
@@ -121,6 +141,7 @@ DetectionResult BoneTumourClassifier::predict(const QString& imagePath) {
             result.className = "No Tumour Detected";
             result.severity = "Clear";
             result.confidence = 0.0f;
+            result.boundingBox = QRect();
             result.success = true;
         }
 

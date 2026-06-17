@@ -1,4 +1,5 @@
 #include <QString>
+#include <QRect>
 #include <vector>
 #include <memory>
 #include <onnxruntime_cxx_api.h>
@@ -9,6 +10,7 @@ struct DetectionResult {
     QString severity; 
     bool success;
     QString errorMessage;
+    QRect boundingBox;
 };
 
 class BoneTumourClassifier {
