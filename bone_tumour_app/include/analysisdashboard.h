@@ -9,6 +9,8 @@
 #include <QMessageBox>
 #include <QFrame>
 #include <QLineEdit>
+#include <QRadioButton>
+#include <QProgressBar>
 #include "bonetumourclassifier.h"
 
 class MainWindow : public QMainWindow
@@ -41,9 +43,9 @@ private:
     QLabel *titleLabel;
     QLabel *formatLabel;
     QLabel *detectionContainer;
+    QLabel *previewContainer;
     QLabel *tumourNameLabel;
     QLabel *severityLabel;
-    QLabel *confidenceLabel;
     QLabel *dropLabel;
     QLabel *statusTitle;
     QLabel *statusLabel;
@@ -51,14 +53,23 @@ private:
     QLabel *detailTitle;
     QLabel *IdLabel;
     QLabel *viewLabel;
+    QLabel *severityTitle;
+    QLabel *confidenceTitle;
+    QLabel *tumourNameTitle;
+
+    QProgressBar *confidenceBar;
     
     // Inputs & Window layout
     QLineEdit *IdInput;
-    QLineEdit *viewInput;
-    QComboBox *comboBox;
-    QStackedWidget *stackedWidget;
+    QRadioButton *APview;
+    QRadioButton *Lateralview;
+    QComboBox *mainViewRouter;
+    QComboBox *imageStageRouter;
+    QStackedWidget *mainViewStack;
+    QStackedWidget *imageStageStack;
     QMessageBox *infoMessageBox;
     QFrame *dropZone;
+    QFrame *previewZone;
     QFrame *detectionZone;
     QFrame *statusCard;
     QFrame *detailCard;
@@ -66,8 +77,12 @@ private:
     QFrame *reportCard;
     QWidget *page1Sidebar;
     QWidget *page2Sidebar;
-    QWidget *page1;
-    QWidget *page2;
+    QWidget *inputPage;
+    QWidget *assessmentPage;
+
+    // File Pixmap Handling
+    QString filePath;
+    QSize zoneSize;
 };
 
 #endif 

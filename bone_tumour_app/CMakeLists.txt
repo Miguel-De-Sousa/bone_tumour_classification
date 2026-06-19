@@ -10,16 +10,25 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/onnxruntime/include)
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/onnxruntime/lib)
-
+# 1. Define the executable first
 add_executable(BoneTumourApp
     src/main.cpp
     src/analysisdashboard.cpp
-    src/analysisdashboard.h
-    src/bonetumourclassifier.h
+    include/analysisdashboard.h
+    include/bonetumourclassifier.h
     src/bonetumourclassifier.cpp
+    assets/assets.qrc
+)
+
+target_include_directories(BoneTumourApp PRIVATE 
+    include
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/onnxruntime/include
+)
+
+target_link_directories(BoneTumourApp PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/onnxruntime/lib
 )
 
 target_link_libraries(BoneTumourApp PRIVATE Qt6::Widgets Qt6::Core Qt6::Gui onnxruntime)
+
 configure_file(model/bonetumour_model.onnx ${CMAKE_BINARY_DIR}/bonetumour_model.onnx COPYONLY)

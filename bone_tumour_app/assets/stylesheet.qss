@@ -1,0 +1,162 @@
+/* Main Window Base Color */
+QMainWindow, QWidget#centralWidget {
+    background-color: #f5f7fa;
+}
+
+/* Window Title */
+QLabel#TitleLabel {
+    font-size: 20px; 
+    font-weight: bold; 
+    color: #010101;
+}
+
+/* Drop Container */
+QFrame#DropZone {
+    background-color: #ffffff;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+}
+
+QLabel#FormatText {
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* Sidebar Cards */
+QFrame#Card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+QLabel#CardTitle {
+    font-size: 11px;
+    font-weight: bold;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+QLabel#CardText {
+    color: #334155;
+    font-size: 13px;
+}
+
+/* Form Inputs */
+QLabel#FieldLabel {
+    font-size: 12px;
+    font-weight: bold;
+    color: #475569;
+}
+
+QLineEdit#InputField {
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 8px;
+    color: #0f172a;
+    font-size: 13px;
+}
+QLineEdit#InputField:focus {
+    border: 1px solid #2563eb;
+    background-color: #ffffff;
+}
+QRadioButton#InputField {
+    font-size: 14px;
+    font-weight: bold;
+    color: #1e293b;
+    spacing: 8px;
+}
+QRadioButton#InputField::indicator {
+    width: 18px;
+    height: 18px;
+    border-radius: 10px; 
+    border: 2px solid #cbd5e1;
+    background-color: #ffffff;
+}
+QRadioButton#InputField::indicator:hover {
+    border-color: #94a3b8;
+}
+QRadioButton#InputField::indicator:checked {
+    border-color: #2563eb;
+    background-color: #ffffff;
+}
+
+/* Model Information Button */
+QPushButton#InfoButton {
+    background-color: transparent;
+    color: #64748b;    
+    border: none;                   
+    border-radius: 6px;                 
+    padding: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: left;
+}
+QPushButton#InfoButton:hover {
+    background-color: #e2e8f0; 
+    color: #0f172a;
+}
+
+/* Action Buttons */
+QPushButton#UploadButton {
+    background-color: #ffffff;
+    border: 1px solid #2563eb;
+    color: #2563eb;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 10px 24px;
+}
+QPushButton#UploadButton:hover {
+    background-color: #eff6ff;
+}
+QPushButton#UploadButton:pressed {
+    background-color: #dbeafe;
+}
+
+QPushButton#AnalyseButton {
+    background-color: #2563eb;
+    color: #ffffff;   
+    font-size: 14px;
+    font-weight: bold;
+    border: none;                       
+    border-radius: 8px;                 
+    padding: 10px 24px;
+}
+QPushButton#AnalyseButton:hover {
+    background-color: #1d4ed8;
+}
+QPushButton#AnalyseButton:pressed {
+    background-color: #1e40af;          
+}
+QPushButton#AnalyseButton:disabled {
+    background-color: #d3d3d3;
+    color: #a9a9a9;   
+    font-size: 14px;
+    font-weight: bold;
+    border: 1px solid #a9a9a9;                       
+    border-radius: 8px;                 
+    padding: 10px 24px;
+}
+
+/* Detection Container */
+QFrame#DetectionZone {
+    background-color: #000000; 
+    border-radius: 8px; 
+    border: 1px solid #E0E0E0;
+}
+
+/* Detection Confidence Bar */
+QProgressBar#ConfidenceBar {
+    border: none;
+    background-color: #EBF0F9;      
+    height: 12px;                  
+    border-radius: 6px;           
+    text-align: right;           
+    margin-right: 45px;
+}
+
+QProgressBar#ConfidenceBar::chunk {
+    background-color: #2563eb;      
+    border-radius: 6px;             
+}
