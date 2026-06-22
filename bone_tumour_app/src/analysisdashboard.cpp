@@ -25,9 +25,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 
 void MainWindow::setupComponents()
 {   
-    // -----------------------
-    //  -- PAGES & STACKS --
-    // -----------------------
     mainViewRouter = new QComboBox();
     mainViewRouter->addItem("Page 1: Scan Upload");
     mainViewRouter->addItem("Page 2: Analysis");
@@ -41,10 +38,6 @@ void MainWindow::setupComponents()
     imageStageRouter->addItem("Preview Zone");
     imageStageRouter->setFixedSize(0, 0);
 
-    // -----------------------
-    // -- PAGE 1 COMPONENTS --
-    // -----------------------
-
     titleLabel = new QLabel("X-Ray Analysis Suite");
     titleLabel->setObjectName("TitleLabel");
     titleLabel->setAlignment(Qt::AlignCenter);
@@ -54,7 +47,6 @@ void MainWindow::setupComponents()
     separatorTitlePage1->setFrameShadow(QFrame::Sunken);
     separatorTitlePage1->setObjectName("SidebarDivider");
 
-    // IMAGE DROP ZONE
     dropZone = new QFrame();
     dropZone->setObjectName("DropZone");
     
@@ -63,7 +55,7 @@ void MainWindow::setupComponents()
     "<p align='center'>"
     "  <img src=':/drag-and-drop.png' width='48' height='48'>"
     "</p>"
-    "<p align='center' style='font-size: 16px; font-weight: bold; margin-top: 10px; color: #1e293b;'>"
+    "<p align='center' style='font-size: 16px; font-weight: bold; margin-top: 10px; color: #E2E8F0;'>"
     "  Drag & Drop <span style='color: #2563eb; text-decoration: underline;'>X-Ray file</span>"
     "</p>"
     );
@@ -73,7 +65,6 @@ void MainWindow::setupComponents()
     formatLabel->setObjectName("FormatText"); 
     formatLabel->setAlignment(Qt::AlignCenter);
 
-    // IMAGE PREVIEW ZONE
     previewZone = new QFrame();
     previewZone->setObjectName("DetectionZone");
 
@@ -82,11 +73,9 @@ void MainWindow::setupComponents()
     previewContainer->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     previewContainer->setAlignment(Qt::AlignCenter);
 
-    // RIGHT COLUMN / SIDEBAR 
     page1Sidebar = new QWidget();
     page1Sidebar->setFixedWidth(320);
 
-    // CARD 1: SYSTEM STAT
     statusCard = new QFrame();
     statusCard->setObjectName("Card"); 
     
@@ -99,7 +88,6 @@ void MainWindow::setupComponents()
     statusLabel = new QLabel("Status: <span style = 'color: #FFB703; font-weight: bold;'> WAITING </span>");
     statusLabel->setObjectName("CardText");
 
-    // CARD 2: PRE-ANALYSIS DETAILS
     detailCard = new QFrame();
     detailCard->setObjectName("Card"); 
 
@@ -111,7 +99,7 @@ void MainWindow::setupComponents()
     
     IdInput = new QLineEdit();
     IdInput->setObjectName("InputField");
-    IdInput->setPlaceholderText("Enter Patient ID ");
+    IdInput->setPlaceholderText("000-000-0000");
     
     viewLabel = new QLabel("<sup style = 'color: #ff0000;'>*</sup> Scan View");
     viewLabel->setObjectName("FieldLabel");
@@ -124,7 +112,6 @@ void MainWindow::setupComponents()
     Lateralview->setObjectName("InputField");
     Lateralview->setCursor(Qt::PointingHandCursor);
 
-    // CARD 3: ADVANCED ANALYSIS DETAILS
     advDetailCard = new QFrame();
     advDetailCard->setObjectName("Card");
 
@@ -141,7 +128,6 @@ void MainWindow::setupComponents()
     clinicalNotes->setPlaceholderText("Enter clinical notes here...");
     clinicalNotes->setVisible(false);
 
-    // MODEL INFORMATION
     infoButton = new QPushButton(" Model Information");
     infoButton->setIcon(QIcon(":/info.png"));
     infoButton->setIconSize(QSize(16,16));
@@ -153,27 +139,37 @@ void MainWindow::setupComponents()
     infoMessageBox->setObjectName("InfoMessageBox");
     infoMessageBox->setWindowTitle("Model Information");
     infoMessageBox->setText(
-        "<div style='min-width: 450px; font-family: sans-serif; color: #334155;'>"
-        "<h2 style='margin: 0; color: #0f172a; font-size: 18px; font-weight: bold;'>YOLOv8 Bone Tumour Classifier</h2>"
-        "<p style='margin: 2px 0 0 0; color: #64748b; font-size: 13px; font-weight: 600;'>Onnx Runtime Model</p>"
-        "<hr style='border: none; background-color: #e2e8f0; height: 1px; margin: 12px 0;'/>"
-        "<p style='font-size: 13px; line-height: 1.5; color: #334155; margin: 0;'>"
-            "This suite executes computer vision classification using a deep learning model trained on "
-            "publicly available bone tumour data via Kaggle."
-        "</p>"
-        "<p style='font-size: 13px; font-weight: bold; color: #1e293b; margin: 16px 0 6px 0;'>"
-            "Supported Types:"
-        "</p>"
-        "<ul style='margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; color: #334155;'>"
-            "<li style='margin-bottom: 3px;'>Giant Cell Tumour</li>"
-            "<li style='margin-bottom: 3px;'>Osteochondroma</li>"
-            "<li style='margin-bottom: 3px;'>Osteosarcoma</li>"
-            "<li style='margin-bottom: 3px;'>Osteofibroma</li>"
-            "<li style='margin-bottom: 3px;'>Other Benign Tumour</li>"
-            "<li style='margin-bottom: 3px;'>Other Malignant Tumour</li>"
-        "</ul>"
-        "<hr style='border: none; background-color: #e2e8f0; height: 1px; margin: 12px 0 0 0;'/>"
+    "<div style='min-width: 450px; font-family: \".AppleSystemUIFont\", \"Helvetica Neue\", Arial, sans-serif; color: #94A3B8; line-height: 1.5;'>"
+        "<div style='display: flex; flex-direction: column; gap: 4px;'>"
+            "<h2 style='margin: 0; color: #F8FAFC; font-size: 20px; font-weight: 700; letter-spacing: -0.3px;'>YOLOv8 Bone Tumour Classifier</h2>"
+            "<div style='margin-top: 4px;'>"
+                "<span style='background-color: rgba(0, 104, 255, 0.15); color: #38BDF8; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.2); letter-spacing: 0.5px; text-transform: uppercase;'>"
+                    "ONNX Runtime Engine"
+                "</span>"
+            "</div>"
         "</div>"
+        
+        "<hr style='border: none; background-color: #1E293B; height: 1px; margin: 16px 0;'/>"
+        
+        "<p style='font-size: 13px; color: #94A3B8; margin: 0;'>"
+            "This suite executes computer vision classification using a deep learning model trained on publicly available bone tumour data via Kaggle."
+        "</p>"
+        
+        "<p style='font-size: 12px; font-weight: 700; color: #E2E8F0; margin: 20px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;'>"
+            "Supported Pathology Targets"
+        "</p>"
+        
+        "<ul style='margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.7; color: #CBD5E1;'>"
+            "<li style='margin-bottom: 4px;'><strong style='color: #F1F5F9;'>Giant Cell Tumour</strong></li>"
+            "<li style='margin-bottom: 4px;'><strong style='color: #F1F5F9;'>Osteochondroma</strong></li>"
+            "<li style='margin-bottom: 4px;'><strong style='color: #F1F5F9;'>Osteosarcoma</strong></li>"
+            "<li style='margin-bottom: 4px;'><strong style='color: #F1F5F9;'>Osteofibroma</strong></li>"
+            "<li style='margin-bottom: 4px;'><strong style='color: #94A3B8;'>Other Benign Variations</strong></li>"
+            "<li style='margin-bottom: 4px;'><strong style='color: #94A3B8;'>Other Malignant Formations</strong></li>"
+        "</ul>"
+        
+        "<hr style='border: none; background-color: #1E293B; height: 1px; margin: 18px 0 0 0;'/>"
+    "</div>"
     );
     infoMessageBox->setIconPixmap(QIcon(":/info.png").pixmap(32, 32));
 
@@ -187,9 +183,8 @@ void MainWindow::setupComponents()
     separatorActionPage1->setFrameShadow(QFrame::Sunken);
     separatorActionPage1->setObjectName("SidebarDivider");
 
-    // ACTION BUTTONS
     uploadButton = new QPushButton(" Upload");
-    uploadButton->setObjectName("UploadButton"); 
+    uploadButton->setObjectName("ActionButton"); 
     uploadButton->setIcon(QIcon(":/downloads.png"));
     uploadButton->setIconSize(QSize(16,16));
     uploadButton->setFixedHeight(45);
@@ -202,11 +197,6 @@ void MainWindow::setupComponents()
     analyseButton->setEnabled(false);
     analyseButton->setCursor(Qt::PointingHandCursor);
     
-    // -----------------------
-    // -- PAGE 2 COMPONENTS --
-    // -----------------------
-
-    // IMAGE DETECTION ZONE
     detectionZone = new QFrame();
     detectionZone->setObjectName("DetectionZone");
 
@@ -215,44 +205,79 @@ void MainWindow::setupComponents()
     detectionContainer->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     detectionContainer->setAlignment(Qt::AlignCenter);
     
-    // RIGHT COLUMN / SIDEBAR
     page2Sidebar = new QWidget();
     page2Sidebar->setFixedWidth(320);
     
-    // CARD 1: MODEL REPORT
     reportCard = new QFrame();
     reportCard->setObjectName("Card");
 
     confidenceTitle = new QLabel("MODEL CONFIDENCE");
     confidenceTitle->setObjectName("CardTitle");
 
+    confidenceValueLabel = new QLabel();
+    confidenceValueLabel->setObjectName("ConfidenceValueLabel");
+
     confidenceBar = new QProgressBar();
     confidenceBar->setObjectName("ConfidenceBar");
     confidenceBar->setOrientation(Qt::Horizontal);
     confidenceBar->setRange(0, 100);
+    confidenceBar->setTextVisible(false);
     
     tumourNameTitle = new QLabel("TUMOUR CATEGORY");
     tumourNameTitle->setObjectName("CardTitle");
     tumourNameLabel = new QLabel();
-    tumourNameLabel->setStyleSheet("font-size: 30px; font-weight: bold; color: #1A202C; border: none; background: transparent;");
+    tumourNameLabel->setStyleSheet("font-size: 30px; font-weight: bold; color: #E2E8F0; border: none; background: transparent;");
 
     separatorReportPage2 = new QFrame();
     separatorReportPage2->setFrameShape(QFrame::HLine);
     separatorReportPage2->setFrameShadow(QFrame::Sunken);
     separatorReportPage2->setObjectName("SidebarDivider");
 
-    // CARD 2: DETECTED TUMOUR SEVERITY
     severityCard = new QFrame();
     severityCard->setObjectName("Card");
 
     severityTitle = new QLabel("CASE SEVERITY");
     severityTitle->setObjectName("CardTitle");
     severityLabel = new QLabel();
+    severityLabel->setObjectName("SeverityLabel");
     severityLabel->setAlignment(Qt::AlignCenter);
-    severityLabel->setFixedHeight(36);
+    severityLabel->setFixedHeight(40);
     severityLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    // ACTION BUTTONS
+    separatorActionPage2 = new QFrame();
+    separatorActionPage2->setFrameShape(QFrame::HLine);
+    separatorActionPage2->setFrameShadow(QFrame::Sunken);
+    separatorActionPage2->setObjectName("SidebarDivider");
+
+    verificationCard = new QFrame();
+    verificationCard->setObjectName("Card");
+
+    verificationTitle = new QLabel("<sup style = 'color: #ff0000;'>*</sup> CLINICAN VERIFICATION");
+    verificationTitle->setObjectName("CardTitle");
+
+    approveButton = new QPushButton("Approve");
+    approveButton->setObjectName("ApproveButton");
+    approveButton->setCheckable(true);
+    approveButton->setCursor(Qt::PointingHandCursor);
+
+    editDiagnosis = new QPushButton(" Edit Diagnosis  ");
+    editDiagnosis->setObjectName("ActionButton");
+    editDiagnosis->setIcon(QIcon(":/edit.png"));
+    editDiagnosis->setIconSize(QSize(16,16));
+    editDiagnosis->setLayoutDirection(Qt::RightToLeft);
+    editDiagnosis->setCursor(Qt::PointingHandCursor);
+
+    exportCard = new QFrame();
+    exportCard->setObjectName("Card");
+
+    exportTitle = new QLabel("EXPORT");
+    exportTitle->setObjectName("CardTitle");
+
+    pdfButton = new QPushButton(" Generate Report");
+    pdfButton->setObjectName("ActionButton");
+    pdfButton->setIcon(QIcon(":/report.png"));
+    pdfButton->setIconSize(QSize(16,16));
+
     restartButton = new QPushButton(" New Scan");
     restartButton->setIcon(QIcon(":/refresh.png"));
     restartButton->setFixedHeight(40);
@@ -261,15 +286,12 @@ void MainWindow::setupComponents()
 
     exitButton = new QPushButton(" Close Suite");
     exitButton->setFixedHeight(40);
-    exitButton->setObjectName("UploadButton");
+    exitButton->setObjectName("ActionButton");
     exitButton->setCursor(Qt::PointingHandCursor);
 }
 
 void MainWindow::setupLayouts()
 {
-    // -----------------------
-    //   -- PAGE 1 LAYOUT --
-    // -----------------------
     QHBoxLayout *page1Layout = new QHBoxLayout(inputPage);
     page1Layout->setContentsMargins(20, 20, 20, 20);
     page1Layout->setSpacing(20);
@@ -343,28 +365,36 @@ void MainWindow::setupLayouts()
     page1Layout->addWidget(imageStageStack, 1);
     page1Layout->addWidget(page1Sidebar);
 
-    // -----------------------
-    //   -- PAGE 2 LAYOUT --
-    // -----------------------
     QHBoxLayout *page2Layout = new QHBoxLayout(assessmentPage);
     page2Layout->setContentsMargins(20, 20, 20, 20);
     page2Layout->setSpacing(20);
 
     QVBoxLayout *detectionLayout = new QVBoxLayout(detectionZone);
-    detectionLayout->setContentsMargins(20, 40, 20, 20);
+    detectionLayout->setContentsMargins(20, 20, 20, 20);
     detectionLayout->addWidget(detectionContainer);
 
     QVBoxLayout *page2SidebarLayout = new QVBoxLayout(page2Sidebar);
     page2SidebarLayout->setContentsMargins(0, 0, 0, 0);
     page2SidebarLayout->setSpacing(15);
 
+    QFrame *resultsPanel = new QFrame();
+    resultsPanel->setObjectName("ResultsPanel");
+    QVBoxLayout *resultsPanelLayout = new QVBoxLayout(resultsPanel);
+    resultsPanelLayout->setContentsMargins(0, 0, 0, 0);
+    resultsPanelLayout->setSpacing(15);
+
     QVBoxLayout *reportLayout = new QVBoxLayout(reportCard);
     reportLayout->setContentsMargins(15, 15, 15, 15);
     reportLayout->setSpacing(8);
     reportLayout->addWidget(tumourNameTitle);
     reportLayout->addWidget(tumourNameLabel);
-    reportLayout->addSpacing(20);
-    reportLayout->addWidget(confidenceTitle);
+    reportLayout->addSpacing(15);
+    
+    QHBoxLayout *confidenceHeaderLayout = new QHBoxLayout();
+    confidenceHeaderLayout->addWidget(confidenceTitle);
+    confidenceHeaderLayout->addStretch();
+    confidenceHeaderLayout->addWidget(confidenceValueLabel);
+    reportLayout->addLayout(confidenceHeaderLayout);
     reportLayout->addWidget(confidenceBar);
 
     QVBoxLayout *severityLayout = new QVBoxLayout(severityCard);
@@ -373,10 +403,41 @@ void MainWindow::setupLayouts()
     severityLayout->addWidget(severityTitle);
     severityLayout->addWidget(severityLabel);
 
-    page2SidebarLayout->addWidget(reportCard);
-    page2SidebarLayout->addWidget(separatorReportPage2);
-    page2SidebarLayout->addWidget(severityCard);
+    resultsPanelLayout->addWidget(reportCard);
+    resultsPanelLayout->addWidget(separatorReportPage2);
+    resultsPanelLayout->addWidget(severityCard);
+
+    QFrame *actionsPanel = new QFrame();
+    actionsPanel->setObjectName("ActionsPanel");
+    QVBoxLayout *actionsPanelLayout = new QVBoxLayout(actionsPanel);
+    actionsPanelLayout->setContentsMargins(0, 0, 0, 0);
+    actionsPanelLayout->setSpacing(15);
+
+    QVBoxLayout *verificationLayout = new QVBoxLayout(verificationCard);
+    verificationLayout->setContentsMargins(15, 15, 15, 15);
+    verificationLayout->setSpacing(8);
+    verificationLayout->addWidget(verificationTitle);
+
+    QHBoxLayout *editLayout = new QHBoxLayout();
+    editLayout->setSpacing(10);
+    editLayout->addWidget(approveButton);
+    editLayout->addWidget(editDiagnosis);
+
+    verificationLayout->addLayout(editLayout);
+
+    QVBoxLayout *exportLayout = new QVBoxLayout(exportCard);
+    exportLayout->setContentsMargins(15, 15, 15, 15);
+    exportLayout->setSpacing(8);
+    exportLayout->addWidget(exportTitle);
+    exportLayout->addWidget(pdfButton);
+
+    actionsPanelLayout->addWidget(verificationCard);
+    actionsPanelLayout->addWidget(exportCard);
+
+    page2SidebarLayout->addWidget(resultsPanel);
     page2SidebarLayout->addStretch();
+    page2SidebarLayout->addWidget(actionsPanel);
+    page2SidebarLayout->addWidget(separatorActionPage2);
 
     QHBoxLayout *page2ActionLayout = new QHBoxLayout();
     page2ActionLayout->setSpacing(10);
@@ -414,6 +475,21 @@ void MainWindow::setupConnections()
     connect(restartButton, &QPushButton::clicked, this, &MainWindow::restartButton_clicked);
     connect(exitButton, &QPushButton::clicked, this, &MainWindow::close);
     connect(advDetailTitle, &QPushButton::clicked, this, &MainWindow::advDetailButton_clicked);
+    connect(IdInput, &QLineEdit::textChanged, this, &MainWindow::analyseButton_state);
+    connect(APview, &QRadioButton::toggled, this, &MainWindow::analyseButton_state);
+    connect(Lateralview, &QRadioButton::toggled, this, &MainWindow::analyseButton_state);
+    connect(approveButton, &QPushButton::toggled, this, [this](bool checked) {
+    if (checked) {
+        approveButton->setText(" Approved");
+        approveButton->setIcon(QIcon(":/check.png"));
+        approveButton->setIconSize(QSize(16,16));
+        editDiagnosis->setVisible(false);
+    } else {
+        approveButton->setText("Approve");
+        approveButton->setIcon(QIcon());
+        editDiagnosis->setVisible(true);
+    }
+});
 }
 
 void MainWindow::initialiseModel()
@@ -433,6 +509,7 @@ void MainWindow::uploadButton_clicked()
     );
 
     if (filePath.isEmpty()) return;
+    analyseButton_state();
 
     QPixmap inputPixmap(filePath);
 
@@ -445,7 +522,6 @@ void MainWindow::uploadButton_clicked()
     previewContainer->setPixmap(inputPixmap.scaled(zoneSize.width(), zoneSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
     statusLabel->setText("Status: <span style = 'color: #2A9D8F; font-weight: bold;'> READY </span>");
-    analyseButton->setEnabled(true);
     imageStageRouter->setCurrentIndex(1);
 }
 
@@ -456,50 +532,75 @@ void MainWindow::analyseButton_clicked()
 
     if (!report.success) {
         severityLabel->setText("System Error");
-        severityLabel->setStyleSheet("color: #FFFFFF; background-color: #E63946; font-weight: bold; font-size: 13px; border-radius: 4px; border: none;");
         return;
     }
 
-    if (report.severity == "Malignant") {
-        severityLabel->setText("  CRITICAL MALIGNANT FINDING");
-        severityLabel->setStyleSheet("color: #E63946; background-color: #FFEBEE; font-weight: bold; font-size: 12px; border-radius: 8px; border: 1px solid #FFCDD2; padding: 5px;");
-    } else if (report.severity == "Aggressive Benign") {
-        severityLabel->setText("  WARNING: LOCALLY AGGRESSIVE");
-        severityLabel->setStyleSheet("color: #FFB703; background-color: #FFFDE7; font-weight: bold; font-size: 12px; border-radius: 8px; border: 1px solid #FFF9C4; padding: 5px;");
-    } else if (report.severity == "Benign") {
-        severityLabel->setText("  BENIGN CONDITION DETECTED");
-        severityLabel->setStyleSheet("color: #2A9D8F; background-color: #E8F5E9; font-weight: bold; font-size: 12px; border-radius: 8px; border: 1px solid #C8E6C9; padding: 5px;");
-    } else {
-        severityLabel->setText("  NO TUMOUR DETECTED");
-        severityLabel->setStyleSheet("color: #0D47A1; background-color: #E3F2FD; font-weight: bold; font-size: 12px; border-radius: 8px; border: 1px solid #BBDEFB; padding: 5px;");
-    }
+    if (!report.boundingBox.isNull()){
+        QPainter painter(&inputPixmap);
+        QPen pen;
 
+        QString statusValue = "";
+
+        if (report.severity == "Malignant") {
+            severityLabel->setText("  CRITICAL MALIGNANT FINDING");
+            statusValue = "Malignant";
+            pen.setColor(QColor("#E63946"));
+
+        } else if (report.severity == "Aggressive Benign") {
+            severityLabel->setText("  WARNING: LOCALLY AGGRESSIVE");
+            statusValue = "Local-Aggressive";
+            pen.setColor(QColor("#FFB703"));
+
+        } else if (report.severity == "Benign") {
+            severityLabel->setText("  BENIGN CONDITION DETECTED");
+            statusValue = "Benign";
+            pen.setColor(QColor("#2A9D8F"));
+
+        } else {
+            severityLabel->setText("  NO TUMOUR DETECTED");
+            statusValue = "None";
+        }
+
+        severityLabel->setProperty("status", statusValue);
+        confidenceBar->setProperty("status", statusValue);
+
+        severityLabel->style()->unpolish(severityLabel);
+        severityLabel->style()->polish(severityLabel);
+    
+        confidenceBar->style()->unpolish(confidenceBar);
+        confidenceBar->style()->polish(confidenceBar);
+
+        painter.setPen(pen);
+        pen.setWidth(10);
+
+        QRect boundbox(report.boundingBox);
+        painter.drawRect(boundbox);
+
+        QString scanInput = "";
+
+        if (APview->isChecked()){
+            scanInput = "AP";
+        }
+        else if(Lateralview->isChecked()){
+            scanInput = "Lateral";
+        }
+        QString patientId = "Patient ID: " + IdInput->text().trimmed();
+        QString scanView = "Scan View: " + scanInput;
+    
+        painter.setPen(Qt::white);
+        painter.setFont(QFont("Arial", 12));
+        painter.drawText(10, inputPixmap.height() - 60, patientId);
+        painter.drawText(10, inputPixmap.height() - 40, scanView);
+
+        painter.end();
+    }
     tumourNameLabel->setText(report.className);
     
     int percentage = report.confidence * 100;
     confidenceBar->setValue(percentage);
 
     QString percentageString = QString("%1%").arg(percentage);
-    confidenceBar->setFormat(percentageString);
-
-    if (!report.boundingBox.isNull()){
-        QPainter painter(&inputPixmap);
-
-        QPen pen;
-        if (report.severity == "Malignant") {
-            pen.setColor(QColor("#E63946"));
-        } else if (report.severity == "Aggressive Benign") {
-            pen.setColor(QColor("#FFB703")); 
-        } else {
-            pen.setColor(QColor("#2A9D8F"));
-        }
-
-        pen.setWidth(1);
-        painter.setPen(pen);
-
-        painter.drawRect(report.boundingBox);
-        painter.end();
-    }
+    confidenceValueLabel->setText(percentageString);
 
     detectionContainer->setPixmap(inputPixmap.scaled(zoneSize.width(), zoneSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     mainViewRouter->setCurrentIndex(1);
@@ -507,7 +608,13 @@ void MainWindow::analyseButton_clicked()
 
 void MainWindow::restartButton_clicked()
 {
-    analyseButton->setEnabled(false);
+    filePath = "";
+    IdInput->clear();
+    APview->setChecked(true);
+    statusLabel->setText("Status: <span style = 'color: #FFB703; font-weight: bold;'> WAITING </span>");
+
+    analyseButton_state();
+
     imageStageRouter->setCurrentIndex(0);
     mainViewRouter->setCurrentIndex(0);
 }
@@ -524,4 +631,14 @@ void MainWindow::advDetailButton_clicked()
         clinicalNotes->setVisible(true);
         advDetailTitle->setText("Advanced Options -");
     }
+}
+
+void MainWindow::analyseButton_state()
+{
+    bool hasPatientID = !IdInput->text().trimmed().isEmpty();
+    bool hasFileUploaded = !filePath.isEmpty();
+    bool isViewSelected = (APview->isChecked() || Lateralview->isChecked());
+
+    bool allConditionsMet = hasPatientID && hasFileUploaded && isViewSelected;
+    analyseButton->setEnabled(allConditionsMet);
 }

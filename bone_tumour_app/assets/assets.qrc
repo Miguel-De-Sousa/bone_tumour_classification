@@ -6,6 +6,8 @@
         <file>search.png</file>
         <file>stylesheet.qss</file>
         <file>info.png</file>
-        <file>angle-right.png</file>
+        <file>report.png</file>
+        <file>edit.png</file>
+        <file>check.png</file>
     </qresource>
 </RCC>
