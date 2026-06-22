@@ -24,16 +24,23 @@ QLabel#FormatText {
 
 /* Sidebar Cards */
 QFrame#Card {
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    background-color: #f5f7fa;
+    /*border: 1px solid #e2e8f0;
+    border-radius: 8px;*/
 }
 
 QLabel#CardTitle {
     font-size: 11px;
     font-weight: bold;
     color: #64748b;
-    text-transform: uppercase;
+}
+
+QPushButton#CardTitle {
+    font-size: 12px;
+    font-weight: bold;
+    color: #64748b;
+    border: none;
+    text-align:left;
 }
 
 QLabel#CardText {
@@ -81,6 +88,24 @@ QRadioButton#InputField::indicator:checked {
     background-color: #ffffff;
 }
 
+/* Advanced Options - Clinical Notes */
+QTextEdit#ClinicalNotes {
+    width: 100%;
+    min-height: 150px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #1e293b;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background-color: #ffffff;
+    outline: none;
+}
+
+QTextEdit#ClinicalNotes:focus {
+    border-color: #2563eb;
+}
+
+
 /* Model Information Button */
 QPushButton#InfoButton {
     background-color: transparent;
@@ -95,6 +120,19 @@ QPushButton#InfoButton {
 QPushButton#InfoButton:hover {
     background-color: #e2e8f0; 
     color: #0f172a;
+}
+QMessageBox#InfoMessageBox {
+    background-color: #ffffff;
+}
+QPushButton#CloseButton {
+    background-color: #2563eb;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    font-size: 13px;
+}
+QPushButton#CloseButton:hover {
+    background-color: #1d4ed8;
 }
 
 /* Action Buttons */
@@ -149,6 +187,8 @@ QFrame#DetectionZone {
 /* Detection Confidence Bar */
 QProgressBar#ConfidenceBar {
     border: none;
+    color: #334155;
+    font-weight: bold;
     background-color: #EBF0F9;      
     height: 12px;                  
     border-radius: 6px;           
@@ -159,4 +199,12 @@ QProgressBar#ConfidenceBar {
 QProgressBar#ConfidenceBar::chunk {
     background-color: #2563eb;      
     border-radius: 6px;             
+}
+
+/* Separators */ 
+QFrame#SidebarDivider {
+    background-color: #e2e8f0; 
+    max-height: 1px;           
+    border: none;              
+    margin: 2px 0px;        
 }

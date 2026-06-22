@@ -11,7 +11,9 @@
 #include <QLineEdit>
 #include <QRadioButton>
 #include <QProgressBar>
+#include <QTextEdit>
 #include "bonetumourclassifier.h"
+#include "animatedstackedwidget.h"
 
 class MainWindow : public QMainWindow
 {
@@ -25,12 +27,16 @@ private slots:
     void setupComponents();
     void setupLayouts();
     void setupConnections();
+    void initialiseModel();
     void uploadButton_clicked(); 
     void analyseButton_clicked();
     void restartButton_clicked();
+    void advDetailButton_clicked();
 
 private:
     BoneTumourClassifier classifier;
+    AnimatedStackedWidget *mainViewStack;
+    AnimatedStackedWidget *imageStageStack;
     
     // Buttons
     QPushButton *uploadButton;
@@ -51,6 +57,8 @@ private:
     QLabel *statusLabel;
     QLabel *modelLabel;
     QLabel *detailTitle;
+    QPushButton *advDetailTitle;
+    QLabel *clinicalNotesTitle;
     QLabel *IdLabel;
     QLabel *viewLabel;
     QLabel *severityTitle;
@@ -65,24 +73,29 @@ private:
     QRadioButton *Lateralview;
     QComboBox *mainViewRouter;
     QComboBox *imageStageRouter;
-    QStackedWidget *mainViewStack;
-    QStackedWidget *imageStageStack;
     QMessageBox *infoMessageBox;
     QFrame *dropZone;
     QFrame *previewZone;
     QFrame *detectionZone;
     QFrame *statusCard;
     QFrame *detailCard;
+    QFrame *advDetailCard;
     QFrame *severityCard;
     QFrame *reportCard;
     QWidget *page1Sidebar;
     QWidget *page2Sidebar;
     QWidget *inputPage;
     QWidget *assessmentPage;
+    QTextEdit *clinicalNotes;
 
     // File Pixmap Handling
     QString filePath;
     QSize zoneSize;
+
+    // Separators
+    QFrame *separatorActionPage1;
+    QFrame *separatorTitlePage1;
+    QFrame *separatorReportPage2;
 };
 
 #endif 

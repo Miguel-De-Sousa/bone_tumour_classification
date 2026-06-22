@@ -10,13 +10,14 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui)
 
-# 1. Define the executable first
 add_executable(BoneTumourApp
     src/main.cpp
     src/analysisdashboard.cpp
     include/analysisdashboard.h
     include/bonetumourclassifier.h
     src/bonetumourclassifier.cpp
+    include/animatedstackedwidget.h
+    src/animatedstackedwidget.cpp
     assets/assets.qrc
 )
 
