@@ -11,6 +11,7 @@
         <file>check.png</file>
         <file>onboard.png</file>
         <file>id.png</file>
+        <file>bin.png</file>
         <file>report_template.html</file>
     </qresource>
 </RCC>

@@ -18,7 +18,7 @@ QFrame#DropZone {
     border-radius: 8px;
 }
 
-QFrame#DropZone:hover {
+QFrame#DropZone[dragHover="true"] {
     background-color: #13151C;
     border: 1px dashed #0068FF;
 }
@@ -138,6 +138,12 @@ QPushButton#ActionButton:hover, #ApproveButton:hover {
 
 QPushButton#ActionButton:clicked, #ApproveButton:clicked{
     background-color: #1A1F29;
+}
+
+QPushButton#ActionButton:disabled {
+    background-color: #1E222B;
+    color: #475569;
+    border: 1px solid #262B36;
 }
 
 QPushButton#ApproveButton:checked {

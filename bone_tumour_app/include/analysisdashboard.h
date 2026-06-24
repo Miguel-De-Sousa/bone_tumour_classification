@@ -35,6 +35,7 @@ private slots:
     void analyseButton_state();
     void lastPatient_ID();
     void generateReport_pdf();
+    bool eventFilter(QObject *watched, QEvent *event);
 
 private:
     BoneTumourClassifier classifier;
@@ -52,6 +53,7 @@ private:
     QPushButton *pdfButton;
     QPushButton *testScan;
     QPushButton *previousId;
+    QPushButton *clearButton;
     
     // Labels
     QLabel *titleLabel;
@@ -76,12 +78,13 @@ private:
     QLabel *verificationTitle;
     QLabel *confidenceValueLabel;
     QLabel *containerLabel;
+    QLabel *pathLabel;
 
     QProgressBar *confidenceBar;
     
     // Inputs & Window layout
     QLineEdit *IdInput;
-    QRadioButton *APview;
+    QRadioButton *Frontview;
     QRadioButton *Lateralview;
     QComboBox *mainViewRouter;
     QComboBox *imageStageRouter;

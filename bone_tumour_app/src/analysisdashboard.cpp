@@ -16,6 +16,10 @@
 #include <QBuffer>
 #include <QCoreApplication>
 #include <QPrinter>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QMimeData>
+#include <QFileInfo>
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 {
@@ -63,6 +67,8 @@ void MainWindow::setupComponents()
 
     dropZone = new QFrame();
     dropZone->setObjectName("DropZone");
+    dropZone->setAcceptDrops(true);
+    dropZone->installEventFilter(this);
     
     dropLabel = new QLabel();
     dropLabel->setText(
@@ -72,12 +78,26 @@ void MainWindow::setupComponents()
     "<p align='center' style='font-size: 16px; font-weight: bold; margin-top: 10px; color: #E2E8F0;'>"
     "  Drag & Drop <span style='color: #2563eb; text-decoration: underline;'>X-Ray file</span>"
     "</p>"
+    "<p align='center' style='font-size: 16px; font-weight: bold; margin-top: 10px; color: #E2E8F0;'>"
+    " or "
+    "</p>"
     );
     dropLabel->setAlignment(Qt::AlignCenter);
+
+    uploadButton = new QPushButton(" Upload");
+    uploadButton->setObjectName("ActionButton"); 
+    uploadButton->setIcon(QIcon(":/downloads.png"));
+    uploadButton->setIconSize(QSize(16,16));
+    uploadButton->setFixedHeight(45);
+    uploadButton->setFixedWidth(135);
+    uploadButton->setCursor(Qt::PointingHandCursor);
 
     formatLabel = new QLabel("Supported formats: PNG, JPG, JPEG");
     formatLabel->setObjectName("FormatText"); 
     formatLabel->setAlignment(Qt::AlignCenter);
+
+    pathLabel = new QLabel();
+    pathLabel->setObjectName("CardText");
 
     testScan = new QPushButton("Onboarding");
     testScan->setObjectName("TestButton");
@@ -131,10 +151,10 @@ void MainWindow::setupComponents()
     viewLabel = new QLabel("<sup style = 'color: #ff0000;'>*</sup> Scan View");
     viewLabel->setObjectName("FieldLabel");
 
-    APview = new QRadioButton("AP");
-    APview->setObjectName("InputField");
-    APview->setCursor(Qt::PointingHandCursor);
-    APview->setChecked(true);
+    Frontview = new QRadioButton("Front");
+    Frontview->setObjectName("InputField");
+    Frontview->setCursor(Qt::PointingHandCursor);
+    Frontview->setChecked(true);
     Lateralview = new QRadioButton("Lateral");
     Lateralview->setObjectName("InputField");
     Lateralview->setCursor(Qt::PointingHandCursor);
@@ -205,12 +225,13 @@ void MainWindow::setupComponents()
     separatorActionPage1->setFrameShadow(QFrame::Sunken);
     separatorActionPage1->setObjectName("SidebarDivider");
 
-    uploadButton = new QPushButton(" Upload");
-    uploadButton->setObjectName("ActionButton"); 
-    uploadButton->setIcon(QIcon(":/downloads.png"));
-    uploadButton->setIconSize(QSize(16,16));
-    uploadButton->setFixedHeight(45);
-    uploadButton->setCursor(Qt::PointingHandCursor);
+    clearButton = new QPushButton(" Clear");
+    clearButton->setObjectName("ActionButton"); 
+    clearButton->setFixedHeight(45);
+    clearButton->setCursor(Qt::PointingHandCursor);
+    clearButton->setIcon(QIcon(":/bin.png"));
+    clearButton->setIconSize(QSize(16,16));
+    clearButton->setEnabled(false);
 
     analyseButton = new QPushButton(" Analyse");
     analyseButton->setObjectName("AnalyseButton");
@@ -326,6 +347,7 @@ void MainWindow::setupLayouts()
     dropZoneLayout->setContentsMargins(20, 20, 20, 20);
     dropZoneLayout->addStretch();
     dropZoneLayout->addWidget(dropLabel);
+    dropZoneLayout->addWidget(uploadButton, 0 ,Qt::AlignHCenter);
     dropZoneLayout->addStretch();
     dropZoneLayout->addWidget(formatLabel);
 
@@ -358,7 +380,7 @@ void MainWindow::setupLayouts()
     
     QHBoxLayout *radioLayout = new QHBoxLayout();
     radioLayout->setSpacing(20);
-    radioLayout->addWidget(APview);
+    radioLayout->addWidget(Frontview);
     radioLayout->addWidget(Lateralview);
     radioLayout->addStretch();
 
@@ -380,8 +402,8 @@ void MainWindow::setupLayouts()
 
     QHBoxLayout *page1ActionLayout = new QHBoxLayout();
     page1ActionLayout->setSpacing(10);
-    page1ActionLayout->addWidget(uploadButton);
     page1ActionLayout->addWidget(analyseButton);
+    page1ActionLayout->addWidget(clearButton);
     page1SidebarLayout->addLayout(page1ActionLayout);
 
     imageStageStack = new AnimatedStackedWidget();
@@ -389,6 +411,7 @@ void MainWindow::setupLayouts()
     imageStageStack->addWidget(previewZone);
 
     QHBoxLayout *page1HLeftbarLayout = new QHBoxLayout();
+    page1HLeftbarLayout->addWidget(pathLabel);
     page1HLeftbarLayout->addStretch();
     page1HLeftbarLayout->addWidget(testScan);
     page1HLeftbarLayout->addWidget(previousId);
@@ -513,10 +536,11 @@ void MainWindow::setupConnections()
     connect(uploadButton, &QPushButton::clicked, this, &MainWindow::uploadButton_clicked);
     connect(analyseButton, &QPushButton::clicked, this, &MainWindow::analyseButton_clicked);
     connect(restartButton, &QPushButton::clicked, this, &MainWindow::restartButton_clicked);
+    connect(clearButton, &QPushButton::clicked, this, &MainWindow::restartButton_clicked);
     connect(exitButton, &QPushButton::clicked, this, &MainWindow::close);
     connect(advDetailTitle, &QPushButton::clicked, this, &MainWindow::advDetailButton_clicked);
     connect(IdInput, &QLineEdit::textChanged, this, &MainWindow::analyseButton_state);
-    connect(APview, &QRadioButton::toggled, this, &MainWindow::analyseButton_state);
+    connect(Frontview, &QRadioButton::toggled, this, &MainWindow::analyseButton_state);
     connect(Lateralview, &QRadioButton::toggled, this, &MainWindow::analyseButton_state);
     connect(previousId, &QPushButton::clicked, this, &MainWindow::lastPatient_ID);
     connect(approveButton, &QPushButton::toggled, this, [this](bool checked) {
@@ -544,14 +568,74 @@ void MainWindow::initialiseModel()
 
 MainWindow::~MainWindow(){}
 
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == dropZone) {
+        if (event->type() == QEvent::DragEnter) {
+            QDragEnterEvent *dragEvent = static_cast<QDragEnterEvent*>(event);
+            if (dragEvent->mimeData()->hasUrls()) {
+                dragEvent->acceptProposedAction();
+
+                dropZone->setProperty("dragHover", true);
+                dropZone->style()->unpolish(dropZone);
+                dropZone->style()->polish(dropZone);
+
+                return true;
+            }
+        }
+        else if (event->type() == QEvent::DragLeave) {
+            dropZone->setProperty("dragHover", false);
+            dropZone->style()->unpolish(dropZone);
+            dropZone->style()->polish(dropZone);
+            return true;
+        }
+        else if (event->type() == QEvent::Drop) {
+            QDropEvent *dropEvent = static_cast<QDropEvent*>(event);
+            const QMimeData *mimeData = dropEvent->mimeData();
+
+            if (mimeData->hasUrls() && !mimeData->urls().isEmpty()) {
+                QString droppedFilePath = mimeData->urls().first().toLocalFile();
+                QFileInfo fileInfo(droppedFilePath);
+                QString ext = fileInfo.suffix().toLower();
+
+                if (ext == "png" || ext == "jpg" || ext == "jpeg") {
+                    dropEvent->acceptProposedAction();
+                    
+                    this->filePath = droppedFilePath;
+                    pathLabel->setText(filePath);
+                    analyseButton_state();
+
+                    QPixmap inputPixmap(filePath);
+                    if (!inputPixmap.isNull()) {
+                        zoneSize = dropZone->size();
+                        previewContainer->setPixmap(inputPixmap.scaled(zoneSize.width(), zoneSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+                        statusLabel->setText("Status: <span style = 'color: #2A9D8F; font-weight: bold;'> READY </span>");
+                        clearButton->setEnabled(true);
+                        imageStageRouter->setCurrentIndex(1);
+                    } else {
+                        QMessageBox::warning(this, tr("Error"), tr("Failed to load dropped image"));
+                    }
+                } else {
+                    QMessageBox::warning(this, tr("Unsupported Format"), tr("Please drop a PNG, JPG, or JPEG file."));
+                }
+                return true;
+            }
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
+}
+
 void MainWindow::uploadButton_clicked()
 {
+    clearButton->setEnabled(true);
     filePath = QFileDialog::getOpenFileName(
         this, tr("Open X-Ray Scan"), "", tr("Images (*.png *.jpg *.jpeg)")
     );
 
     if (filePath.isEmpty()) return;
     analyseButton_state();
+
+    pathLabel->setText(filePath);
 
     QPixmap inputPixmap(filePath);
 
@@ -622,8 +706,8 @@ void MainWindow::analyseButton_clicked()
 
         scanView = "";
 
-        if (APview->isChecked()){
-            scanView = "AP";
+        if (Frontview->isChecked()){
+            scanView = "Front";
         }
         else if(Lateralview->isChecked()){
             scanView = "Lateral";
@@ -657,9 +741,11 @@ void MainWindow::restartButton_clicked()
 {
     filePath = "";
     IdInput->clear();
-    APview->setChecked(true);
+    Frontview->setChecked(true);
     statusLabel->setText("Status: <span style = 'color: #FFB703; font-weight: bold;'> WAITING </span>");
     previousId->setEnabled(true);
+    clearButton->setEnabled(false);
+    pathLabel->clear();
 
     analyseButton_state();
 
@@ -685,7 +771,7 @@ void MainWindow::analyseButton_state()
 {
     bool hasPatientID = !IdInput->text().trimmed().isEmpty();
     bool hasFileUploaded = !filePath.isEmpty();
-    bool isViewSelected = (APview->isChecked() || Lateralview->isChecked());
+    bool isViewSelected = (Frontview->isChecked() || Lateralview->isChecked());
 
     bool allConditionsMet = hasPatientID && hasFileUploaded && isViewSelected;
     analyseButton->setEnabled(allConditionsMet);
@@ -713,16 +799,16 @@ void MainWindow::generateReport_pdf()
     QString outputPath = appDataPath + "/output_image.png";
     outputPixmap.save(outputPath, "PNG");
 
-    QString savePath = QFileDialog::getSaveFileName(this, 
+    /*QString savePath = QFileDialog::getSaveFileName(this, 
         tr("Save PDF Report"), "", tr("PDF Files (*.pdf)"));
     
     if (savePath.isEmpty()) {
         return;
-    }
+    }*/
 
     QFile htmlFile(":/report_template.html");
     if (!htmlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QMessageBox::critical(this, tr("Error"), tr("Could not open HTML template file."));
+        QMessageBox::critical(this, tr("Error"), tr("Could not open template file."));
         return;
     }
 
@@ -737,10 +823,11 @@ void MainWindow::generateReport_pdf()
     QPrinter printer(QPrinter::HighResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setPageSize(QPageSize(QPageSize::A4));
-    printer.setOutputFileName(savePath);
+    QString outputname = appDataPath + QString("/report_%1.pdf").arg(IdInput->text().trimmed());
+    printer.setOutputFileName(outputname);
 
     document.print(&printer);
 
-    QMessageBox::information(this, tr("Success"), tr("PDF successfully generated!"));
+    QMessageBox::information(this, tr("Success"), tr("PDF report successfully generated!"));
 
 }
