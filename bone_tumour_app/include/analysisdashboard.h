@@ -33,6 +33,8 @@ private slots:
     void restartButton_clicked();
     void advDetailButton_clicked();
     void analyseButton_state();
+    void lastPatient_ID();
+    void generateReport_pdf();
 
 private:
     BoneTumourClassifier classifier;
@@ -48,6 +50,8 @@ private:
     QPushButton *approveButton;
     QPushButton *editDiagnosis;
     QPushButton *pdfButton;
+    QPushButton *testScan;
+    QPushButton *previousId;
     
     // Labels
     QLabel *titleLabel;
@@ -71,6 +75,7 @@ private:
     QLabel *exportTitle;
     QLabel *verificationTitle;
     QLabel *confidenceValueLabel;
+    QLabel *containerLabel;
 
     QProgressBar *confidenceBar;
     
@@ -81,6 +86,7 @@ private:
     QComboBox *mainViewRouter;
     QComboBox *imageStageRouter;
     QMessageBox *infoMessageBox;
+    QMessageBox *editMessageBox;
     QFrame *dropZone;
     QFrame *previewZone;
     QFrame *detectionZone;
@@ -91,7 +97,9 @@ private:
     QFrame *reportCard;
     QFrame *verificationCard;
     QFrame *exportCard;
+    QWidget *page1Leftbar;
     QWidget *page1Sidebar;
+    QWidget *page2Leftbar;
     QWidget *page2Sidebar;
     QWidget *inputPage;
     QWidget *assessmentPage;
@@ -106,6 +114,14 @@ private:
     QFrame *separatorTitlePage1;
     QFrame *separatorReportPage2;
     QFrame *separatorActionPage2;
+    QFrame *separatorContainer;
+
+    QString lastPatientId;
+    QString patientId;
+    QString scanView;
+
+    QPixmap inputPixmap;
+    QPixmap outputPixmap;
 };
 
 #endif 

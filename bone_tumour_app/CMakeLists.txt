@@ -8,7 +8,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC OFF) 
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui PrintSupport)
 
 add_executable(BoneTumourApp
     src/main.cpp
@@ -30,6 +30,6 @@ target_link_directories(BoneTumourApp PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/external/onnxruntime/lib
 )
 
-target_link_libraries(BoneTumourApp PRIVATE Qt6::Widgets Qt6::Core Qt6::Gui onnxruntime)
+target_link_libraries(BoneTumourApp PRIVATE Qt6::Widgets Qt6::Core Qt6::Gui onnxruntime Qt6::PrintSupport)
 
 configure_file(model/bonetumour_model.onnx ${CMAKE_BINARY_DIR}/bonetumour_model.onnx COPYONLY)

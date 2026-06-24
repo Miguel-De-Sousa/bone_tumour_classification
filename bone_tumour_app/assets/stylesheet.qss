@@ -9,9 +9,6 @@ QLabel#TitleLabel {
     font-size: 26px;
     font-weight: bold; 
     color: #FFFFFF; 
- 
-    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
-    
     padding-bottom: 8px;
 }
 
@@ -245,4 +242,41 @@ QLabel#SeverityLabel[status="Benign"]{
 QLabel#SeverityLabel[status="None"]{
     background-color: rgba(0, 104, 255, 0.06);
     border: 1px solid #0068FF; 
+}
+
+QPushButton#TestButton, 
+QPushButton#PreviousButton {
+    background-color: transparent;
+    border: none;
+    margin: 0px;
+    padding: 6px 8px;
+    color: #a0aec0; 
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+}
+
+QPushButton#TestButton:hover, 
+QPushButton#PreviousButton:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.05); 
+    border-radius: 4px;
+}
+
+QPushButton#TestButton:pressed, 
+QPushButton#PreviousButton:pressed {
+    color: #d1d5db;
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+QPushButton#TestButton:disabled, 
+QPushButton#PreviousButton:disabled {
+    background-color: transparent;
+    border: none;
+    margin: 0px;
+    padding: 6px 8px;
+    color: #475569; 
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
 }

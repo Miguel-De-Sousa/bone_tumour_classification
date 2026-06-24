@@ -12,6 +12,10 @@
 #include <QFrame>
 #include <QLineEdit>
 #include <QRadioButton>
+#include <QPdfWriter>
+#include <QBuffer>
+#include <QCoreApplication>
+#include <QPrinter>
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 {
@@ -47,6 +51,16 @@ void MainWindow::setupComponents()
     separatorTitlePage1->setFrameShadow(QFrame::Sunken);
     separatorTitlePage1->setObjectName("SidebarDivider");
 
+    page1Leftbar = new QWidget();
+
+    containerLabel = new QLabel("PREVIEW REGION");
+    containerLabel->setObjectName("CardTitle");
+
+    separatorContainer = new QFrame();
+    separatorContainer->setFrameShape(QFrame::HLine);
+    separatorContainer->setFrameShadow(QFrame::Sunken);
+    separatorContainer->setObjectName("SidebarDivider");
+
     dropZone = new QFrame();
     dropZone->setObjectName("DropZone");
     
@@ -64,6 +78,19 @@ void MainWindow::setupComponents()
     formatLabel = new QLabel("Supported formats: PNG, JPG, JPEG");
     formatLabel->setObjectName("FormatText"); 
     formatLabel->setAlignment(Qt::AlignCenter);
+
+    testScan = new QPushButton("Onboarding");
+    testScan->setObjectName("TestButton");
+    testScan->setIcon(QIcon(":/onboard.png"));
+    testScan->setIconSize(QSize(16,16));
+    testScan->setCursor(Qt::PointingHandCursor);
+
+    previousId = new QPushButton("Last Patient");
+    previousId->setObjectName("PreviousButton");
+    previousId->setIcon(QIcon(":/id.png"));
+    previousId->setIconSize(QSize(16,16));
+    previousId->setCursor(Qt::PointingHandCursor);
+    previousId->setEnabled(false);
 
     previewZone = new QFrame();
     previewZone->setObjectName("DetectionZone");
@@ -173,11 +200,6 @@ void MainWindow::setupComponents()
     );
     infoMessageBox->setIconPixmap(QIcon(":/info.png").pixmap(32, 32));
 
-    QPushButton *closeButton = infoMessageBox->addButton("Acknowledge", QMessageBox::AcceptRole);
-    closeButton->setObjectName("CloseButton");
-    closeButton->setFixedSize(120, 36);
-    closeButton->setCursor(Qt::PointingHandCursor);
-
     separatorActionPage1 = new QFrame();
     separatorActionPage1->setFrameShape(QFrame::HLine);
     separatorActionPage1->setFrameShadow(QFrame::Sunken);
@@ -267,6 +289,10 @@ void MainWindow::setupComponents()
     editDiagnosis->setLayoutDirection(Qt::RightToLeft);
     editDiagnosis->setCursor(Qt::PointingHandCursor);
 
+    editMessageBox = new QMessageBox();
+    editMessageBox->setObjectName("InfoMessageBox");
+    editMessageBox->setWindowTitle("Edit Diagnosis");
+
     exportCard = new QFrame();
     exportCard->setObjectName("Card");
 
@@ -297,7 +323,7 @@ void MainWindow::setupLayouts()
     page1Layout->setSpacing(20);
 
     QVBoxLayout *dropZoneLayout = new QVBoxLayout(dropZone);
-    dropZoneLayout->setContentsMargins(20, 40, 20, 20);
+    dropZoneLayout->setContentsMargins(20, 20, 20, 20);
     dropZoneLayout->addStretch();
     dropZoneLayout->addWidget(dropLabel);
     dropZoneLayout->addStretch();
@@ -362,7 +388,20 @@ void MainWindow::setupLayouts()
     imageStageStack->addWidget(dropZone);
     imageStageStack->addWidget(previewZone);
 
-    page1Layout->addWidget(imageStageStack, 1);
+    QHBoxLayout *page1HLeftbarLayout = new QHBoxLayout();
+    page1HLeftbarLayout->addStretch();
+    page1HLeftbarLayout->addWidget(testScan);
+    page1HLeftbarLayout->addWidget(previousId);
+
+    QVBoxLayout *page1LeftbarLayout = new QVBoxLayout(page1Leftbar);
+    page1LeftbarLayout->setContentsMargins(0, 0, 0, 0);
+    page1LeftbarLayout->setSpacing(10);
+    page1LeftbarLayout->addWidget(containerLabel);
+    page1LeftbarLayout->addWidget(separatorContainer);
+    page1LeftbarLayout->addWidget(imageStageStack);
+    page1LeftbarLayout->addLayout(page1HLeftbarLayout);
+
+    page1Layout->addWidget(page1Leftbar, 1);
     page1Layout->addWidget(page1Sidebar);
 
     QHBoxLayout *page2Layout = new QHBoxLayout(assessmentPage);
@@ -463,6 +502,7 @@ void MainWindow::setupLayouts()
 void MainWindow::setupConnections()
 {
     connect(infoButton, &QPushButton::clicked, infoMessageBox, &QMessageBox::exec);
+    connect(editDiagnosis, &QPushButton::clicked, editMessageBox, &QMessageBox::exec);
     connect(mainViewRouter, &QComboBox::currentIndexChanged, [this](int index) {
         mainViewStack->fadeToIndex(index);
     });
@@ -478,6 +518,7 @@ void MainWindow::setupConnections()
     connect(IdInput, &QLineEdit::textChanged, this, &MainWindow::analyseButton_state);
     connect(APview, &QRadioButton::toggled, this, &MainWindow::analyseButton_state);
     connect(Lateralview, &QRadioButton::toggled, this, &MainWindow::analyseButton_state);
+    connect(previousId, &QPushButton::clicked, this, &MainWindow::lastPatient_ID);
     connect(approveButton, &QPushButton::toggled, this, [this](bool checked) {
     if (checked) {
         approveButton->setText(" Approved");
@@ -489,7 +530,8 @@ void MainWindow::setupConnections()
         approveButton->setIcon(QIcon());
         editDiagnosis->setVisible(true);
     }
-});
+    });
+    connect(pdfButton, &QPushButton::clicked, this, &MainWindow::generateReport_pdf);
 }
 
 void MainWindow::initialiseModel()
@@ -528,7 +570,8 @@ void MainWindow::uploadButton_clicked()
 void MainWindow::analyseButton_clicked()
 {
     DetectionResult report = classifier.predict(filePath);
-    QPixmap inputPixmap(filePath);
+    inputPixmap = QPixmap(filePath);
+    QPixmap workingPixmap = inputPixmap;
 
     if (!report.success) {
         severityLabel->setText("System Error");
@@ -536,25 +579,25 @@ void MainWindow::analyseButton_clicked()
     }
 
     if (!report.boundingBox.isNull()){
-        QPainter painter(&inputPixmap);
-        QPen pen;
+        QPainter painter(&workingPixmap);
+        QPen boxPen;
 
         QString statusValue = "";
 
         if (report.severity == "Malignant") {
             severityLabel->setText("  CRITICAL MALIGNANT FINDING");
             statusValue = "Malignant";
-            pen.setColor(QColor("#E63946"));
+            boxPen.setColor(QColor("#E63946"));
 
         } else if (report.severity == "Aggressive Benign") {
             severityLabel->setText("  WARNING: LOCALLY AGGRESSIVE");
             statusValue = "Local-Aggressive";
-            pen.setColor(QColor("#FFB703"));
+            boxPen.setColor(QColor("#FFB703"));
 
         } else if (report.severity == "Benign") {
             severityLabel->setText("  BENIGN CONDITION DETECTED");
             statusValue = "Benign";
-            pen.setColor(QColor("#2A9D8F"));
+            boxPen.setColor(QColor("#2A9D8F"));
 
         } else {
             severityLabel->setText("  NO TUMOUR DETECTED");
@@ -570,27 +613,30 @@ void MainWindow::analyseButton_clicked()
         confidenceBar->style()->unpolish(confidenceBar);
         confidenceBar->style()->polish(confidenceBar);
 
-        painter.setPen(pen);
-        pen.setWidth(10);
+        boxPen.setWidth(3);
+        boxPen.setJoinStyle(Qt::MiterJoin);
+        painter.setPen(boxPen);
 
         QRect boundbox(report.boundingBox);
-        painter.drawRect(boundbox);
+        painter.drawRoundedRect(boundbox, 8, 8);
 
-        QString scanInput = "";
+        scanView = "";
 
         if (APview->isChecked()){
-            scanInput = "AP";
+            scanView = "AP";
         }
         else if(Lateralview->isChecked()){
-            scanInput = "Lateral";
+            scanView = "Lateral";
         }
-        QString patientId = "Patient ID: " + IdInput->text().trimmed();
-        QString scanView = "Scan View: " + scanInput;
-    
-        painter.setPen(Qt::white);
-        painter.setFont(QFont("Arial", 12));
-        painter.drawText(10, inputPixmap.height() - 60, patientId);
-        painter.drawText(10, inputPixmap.height() - 40, scanView);
+
+        patientId = IdInput->text().trimmed();
+        
+        QPen linePen(Qt::white);
+        linePen.setWidth(1);
+        painter.setPen(linePen);
+        painter.setFont(QFont("Arial", 14, QFont::Bold));
+        painter.drawText(10, inputPixmap.height() - 60, "Patient ID: " + patientId);
+        painter.drawText(10, inputPixmap.height() - 40, "Scan View: " + scanView);
 
         painter.end();
     }
@@ -602,7 +648,8 @@ void MainWindow::analyseButton_clicked()
     QString percentageString = QString("%1%").arg(percentage);
     confidenceValueLabel->setText(percentageString);
 
-    detectionContainer->setPixmap(inputPixmap.scaled(zoneSize.width(), zoneSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    outputPixmap = workingPixmap.scaled(zoneSize.width(), zoneSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    detectionContainer->setPixmap(outputPixmap);
     mainViewRouter->setCurrentIndex(1);
 }
 
@@ -612,6 +659,7 @@ void MainWindow::restartButton_clicked()
     IdInput->clear();
     APview->setChecked(true);
     statusLabel->setText("Status: <span style = 'color: #FFB703; font-weight: bold;'> WAITING </span>");
+    previousId->setEnabled(true);
 
     analyseButton_state();
 
@@ -641,4 +689,58 @@ void MainWindow::analyseButton_state()
 
     bool allConditionsMet = hasPatientID && hasFileUploaded && isViewSelected;
     analyseButton->setEnabled(allConditionsMet);
+}
+
+void MainWindow::lastPatient_ID()
+{
+    IdInput->setText(patientId);
+}
+
+void MainWindow::generateReport_pdf()
+{
+    QString appDir = QCoreApplication::applicationDirPath();
+
+    QString appDataPath = appDir + "/appData";
+
+    QDir dir(appDataPath);
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+
+    QString inputPath = appDataPath + "/input_image.png";
+    inputPixmap.save(inputPath, "PNG");
+
+    QString outputPath = appDataPath + "/output_image.png";
+    outputPixmap.save(outputPath, "PNG");
+
+    QString savePath = QFileDialog::getSaveFileName(this, 
+        tr("Save PDF Report"), "", tr("PDF Files (*.pdf)"));
+    
+    if (savePath.isEmpty()) {
+        return;
+    }
+
+    QFile htmlFile(":/report_template.html");
+    if (!htmlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, tr("Error"), tr("Could not open HTML template file."));
+        return;
+    }
+
+    QTextStream in(&htmlFile);
+    QString htmlContent = in.readAll();
+    htmlFile.close();
+
+    QTextDocument document;
+    
+    document.setHtml(htmlContent);
+
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setPageSize(QPageSize(QPageSize::A4));
+    printer.setOutputFileName(savePath);
+
+    document.print(&printer);
+
+    QMessageBox::information(this, tr("Success"), tr("PDF successfully generated!"));
+
 }
