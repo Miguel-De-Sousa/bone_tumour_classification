@@ -20,6 +20,7 @@
 #include <QDropEvent>
 #include <QMimeData>
 #include <QFileInfo>
+#include <QDesktopServices>
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 {
@@ -324,6 +325,7 @@ void MainWindow::setupComponents()
     pdfButton->setObjectName("ActionButton");
     pdfButton->setIcon(QIcon(":/report.png"));
     pdfButton->setIconSize(QSize(16,16));
+    pdfButton->setEnabled(false);
 
     restartButton = new QPushButton(" New Scan");
     restartButton->setIcon(QIcon(":/refresh.png"));
@@ -549,10 +551,12 @@ void MainWindow::setupConnections()
         approveButton->setIcon(QIcon(":/check.png"));
         approveButton->setIconSize(QSize(16,16));
         editDiagnosis->setVisible(false);
+        pdfButton->setEnabled(true);
     } else {
         approveButton->setText("Approve");
         approveButton->setIcon(QIcon());
         editDiagnosis->setVisible(true);
+        pdfButton->setEnabled(false);
     }
     });
     connect(pdfButton, &QPushButton::clicked, this, &MainWindow::generateReport_pdf);
@@ -785,7 +789,6 @@ void MainWindow::lastPatient_ID()
 void MainWindow::generateReport_pdf()
 {
     QString appDir = QCoreApplication::applicationDirPath();
-
     QString appDataPath = appDir + "/appData";
 
     QDir dir(appDataPath);
@@ -799,12 +802,13 @@ void MainWindow::generateReport_pdf()
     QString outputPath = appDataPath + "/output_image.png";
     outputPixmap.save(outputPath, "PNG");
 
-    /*QString savePath = QFileDialog::getSaveFileName(this, 
-        tr("Save PDF Report"), "", tr("PDF Files (*.pdf)"));
+    QByteArray byteArray;
+    QBuffer buffer(&byteArray);
+    buffer.open(QIODevice::WriteOnly);
     
-    if (savePath.isEmpty()) {
-        return;
-    }*/
+    QPixmap scaledPixmap = outputPixmap.scaled(450, 450, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    scaledPixmap.save(&buffer, "PNG");
+    QString base64Image = QString(byteArray.toBase64());
 
     QFile htmlFile(":/report_template.html");
     if (!htmlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -816,18 +820,38 @@ void MainWindow::generateReport_pdf()
     QString htmlContent = in.readAll();
     htmlFile.close();
 
+    scanView = "";
+    if (Frontview->isChecked()) {
+        scanView = "Front";
+    } else if (Lateralview->isChecked()) {
+        scanView = "Lateral";
+    }
+
+    htmlContent.replace("IMAGE_SRC_PLACEHOLDER", "data:image/png;base64," + base64Image);
+    htmlContent.replace("PLACEHOLDER_ID", IdInput->text().trimmed());
+    htmlContent.replace("PLACEHOLDER_VIEW", scanView);
+    htmlContent.replace("PLACEHOLDER_CLINICALNOTES", clinicalNotes->toPlainText().trimmed());
+    htmlContent.replace("PLACEHOLDER_DIAGNOSIS", tumourNameLabel->text().trimmed());
+    htmlContent.replace("PLACEHOLDER_CONFIDENCE", confidenceValueLabel->text().trimmed());
+    htmlContent.replace("PLACEHOLDER_SEVERITY", severityLabel->text());
+
+
     QTextDocument document;
-    
     document.setHtml(htmlContent);
 
-    QPrinter printer(QPrinter::HighResolution);
+    QPrinter printer(QPrinter::ScreenResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setPageSize(QPageSize(QPageSize::A4));
+
     QString outputname = appDataPath + QString("/report_%1.pdf").arg(IdInput->text().trimmed());
     printer.setOutputFileName(outputname);
 
     document.print(&printer);
 
-    QMessageBox::information(this, tr("Success"), tr("PDF report successfully generated!"));
-
+    QMessageBox::information(this, 
+        tr("Report Generated"), 
+        tr("The PDF report has been successfully generated and saved to your <b>appData</b> folder.<br><br>"
+           "It will now open automatically in your system's default viewer.")
+    );
+    QDesktopServices::openUrl(QUrl::fromLocalFile(outputname));
 }
