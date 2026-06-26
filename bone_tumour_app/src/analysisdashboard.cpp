@@ -1,20 +1,11 @@
 #include "analysisdashboard.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QGridLayout>
-#include <QLabel>
-#include <QWidget>
 #include <QFileDialog>
-#include <QMessageBox>
 #include <QPixmap>
 #include <QPainter>
-#include <QMenuBar>
-#include <QFrame>
-#include <QLineEdit>
-#include <QRadioButton>
-#include <QPdfWriter>
 #include <QBuffer>
-#include <QCoreApplication>
+#include <QApplication>
 #include <QPrinter>
 #include <QDragEnterEvent>
 #include <QDropEvent>
@@ -30,10 +21,11 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     setupLayouts();
     setupConnections();
     initialiseModel();
+    QApplication::setCursorFlashTime(0);
 }
 
 void MainWindow::setupComponents()
-{   
+{  
     mainViewRouter = new QComboBox();
     mainViewRouter->addItem("Page 1: Scan Upload");
     mainViewRouter->addItem("Page 2: Analysis");
@@ -130,10 +122,10 @@ void MainWindow::setupComponents()
     statusTitle = new QLabel("SYSTEM STATUS");
     statusTitle->setObjectName("CardTitle");
     
-    modelLabel = new QLabel("Model: BoneTumourClassifier v2.1");
+    modelLabel = new QLabel("Model:<span style = 'font-weight:bold;'> BoneTumourClassifier v2.1 </span>");
     modelLabel->setObjectName("CardText");
     
-    statusLabel = new QLabel("Status: <span style = 'color: #FFB703; font-weight: bold;'> WAITING </span>");
+    statusLabel = new QLabel("Status: <span style = 'color: #FFB703; font-weight: bold; font-size: 14px;'> WAITING </span><img src=':/hourglass.png' height='12' width='12'>");
     statusLabel->setObjectName("CardText");
 
     detailCard = new QFrame();
@@ -148,6 +140,7 @@ void MainWindow::setupComponents()
     IdInput = new QLineEdit();
     IdInput->setObjectName("InputField");
     IdInput->setPlaceholderText("000-000-0000");
+    IdInput->setInputMask("000-000-0000;-");
     
     viewLabel = new QLabel("<sup style = 'color: #ff0000;'>*</sup> Scan View");
     viewLabel->setObjectName("FieldLabel");
@@ -310,10 +303,6 @@ void MainWindow::setupComponents()
     editDiagnosis->setIconSize(QSize(16,16));
     editDiagnosis->setLayoutDirection(Qt::RightToLeft);
     editDiagnosis->setCursor(Qt::PointingHandCursor);
-
-    editMessageBox = new QMessageBox();
-    editMessageBox->setObjectName("InfoMessageBox");
-    editMessageBox->setWindowTitle("Edit Diagnosis");
 
     exportCard = new QFrame();
     exportCard->setObjectName("Card");
@@ -527,7 +516,7 @@ void MainWindow::setupLayouts()
 void MainWindow::setupConnections()
 {
     connect(infoButton, &QPushButton::clicked, infoMessageBox, &QMessageBox::exec);
-    connect(editDiagnosis, &QPushButton::clicked, editMessageBox, &QMessageBox::exec);
+    connect(editDiagnosis, &QPushButton::clicked, this, &MainWindow::editDiagnosis_clicked);
     connect(mainViewRouter, &QComboBox::currentIndexChanged, [this](int index) {
         mainViewStack->fadeToIndex(index);
     });
@@ -651,7 +640,7 @@ void MainWindow::uploadButton_clicked()
     zoneSize = dropZone->size();
     previewContainer->setPixmap(inputPixmap.scaled(zoneSize.width(), zoneSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
-    statusLabel->setText("Status: <span style = 'color: #2A9D8F; font-weight: bold;'> READY </span>");
+    statusLabel->setText("Status: <span style = 'color: #2A9D8F; font-weight: bold; font-size: 14;'> READY </span><img src=':/checked.png' height='12' width='12'>");
     imageStageRouter->setCurrentIndex(1);
 }
 
@@ -746,7 +735,7 @@ void MainWindow::restartButton_clicked()
     filePath = "";
     IdInput->clear();
     Frontview->setChecked(true);
-    statusLabel->setText("Status: <span style = 'color: #FFB703; font-weight: bold;'> WAITING </span>");
+    statusLabel->setText("Status: <span style = 'color: #FFB703; font-weight: bold; font-size: 14px;'> WAITING </span><img src=':/hourglass.png' height='12' width='12'>");
     previousId->setEnabled(true);
     clearButton->setEnabled(false);
     pathLabel->clear();
@@ -786,6 +775,10 @@ void MainWindow::lastPatient_ID()
     IdInput->setText(patientId);
 }
 
+void MainWindow::editDiagnosis_clicked()
+{
+    editDiagnosisDialog.exec();
+}
 void MainWindow::generateReport_pdf()
 {
     QString appDir = QCoreApplication::applicationDirPath();
@@ -801,6 +794,14 @@ void MainWindow::generateReport_pdf()
 
     QString outputPath = appDataPath + "/output_image.png";
     outputPixmap.save(outputPath, "PNG");
+
+    if (reportInfoDialog.exec() == QDialog::Accepted) {
+        QString clinicName = reportInfoDialog.getClinicianName();
+        QString patientName = reportInfoDialog.getClinicalNotes();
+    }
+    else {
+        return;
+    }
 
     QByteArray byteArray;
     QBuffer buffer(&byteArray);

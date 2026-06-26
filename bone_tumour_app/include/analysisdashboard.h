@@ -14,6 +14,8 @@
 #include <QTextEdit>
 #include "bonetumourclassifier.h"
 #include "animatedstackedwidget.h"
+#include "reportinfodialog.h"
+#include "editdiagnosisdialog.h"
 
 class MainWindow : public QMainWindow
 {
@@ -36,11 +38,14 @@ private slots:
     void lastPatient_ID();
     void generateReport_pdf();
     bool eventFilter(QObject *watched, QEvent *event);
+    void editDiagnosis_clicked();
 
 private:
     BoneTumourClassifier classifier;
     AnimatedStackedWidget *mainViewStack;
     AnimatedStackedWidget *imageStageStack;
+    ReportInfoDialog reportInfoDialog;
+    EditDiagnosisDialog editDiagnosisDialog;
     
     // Buttons
     QPushButton *uploadButton;

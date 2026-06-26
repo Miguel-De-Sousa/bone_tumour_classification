@@ -12,6 +12,8 @@
         <file>onboard.png</file>
         <file>id.png</file>
         <file>bin.png</file>
+        <file>hourglass.png</file>
+        <file>checked.png</file>
         <file>report_template.html</file>
     </qresource>
 </RCC>

@@ -19,6 +19,10 @@ add_executable(BoneTumourApp
     include/animatedstackedwidget.h
     src/animatedstackedwidget.cpp
     assets/assets.qrc
+    include/reportinfodialog.h
+    src/reportinfodialog.cpp
+    include/editdiagnosisdialog.h
+    src/editdiagnosisdialog.cpp
 )
 
 target_include_directories(BoneTumourApp PRIVATE 

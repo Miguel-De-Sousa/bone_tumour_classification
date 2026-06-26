@@ -286,3 +286,9 @@ QPushButton#PreviousButton:disabled {
     font-weight: 500;
     text-align: left;
 }
+
+QDialog {
+    background-color: #0F1115;
+    color: #E2E8F0;
+    font-family: ".AppleSystemUIFont", -apple-system, Roboto, sans-serif;
+}
