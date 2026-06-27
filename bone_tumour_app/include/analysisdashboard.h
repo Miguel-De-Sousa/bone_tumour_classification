@@ -127,6 +127,7 @@ private:
     QString lastPatientId;
     QString patientId;
     QString scanView;
+    QString clinicianName;
 
     QPixmap inputPixmap;
     QPixmap outputPixmap;

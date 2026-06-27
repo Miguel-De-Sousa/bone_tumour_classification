@@ -84,3 +84,7 @@ QString ReportInfoDialog::getClinicianName() const {
 QString ReportInfoDialog::getClinicalNotes() const {
     return clinicalNotesEdit->toPlainText().trimmed();
 }
+
+void ReportInfoDialog::setClinicalNotes(const QString notes) {
+    clinicalNotesEdit->setText(notes);
+}

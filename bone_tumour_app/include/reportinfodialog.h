@@ -16,6 +16,7 @@ public:
 
     QString getClinicianName() const;
     QString getClinicalNotes() const;
+    void setClinicalNotes(const QString notes);
 
 private:
     QLineEdit *clinicianNameEdit;

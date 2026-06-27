@@ -762,7 +762,8 @@ void MainWindow::advDetailButton_clicked()
 
 void MainWindow::analyseButton_state()
 {
-    bool hasPatientID = !IdInput->text().trimmed().isEmpty();
+    QString maskedInput = IdInput->text().trimmed().remove("-");
+    bool hasPatientID = maskedInput.length() > 9;
     bool hasFileUploaded = !filePath.isEmpty();
     bool isViewSelected = (Frontview->isChecked() || Lateralview->isChecked());
 
@@ -812,9 +813,10 @@ void MainWindow::generateReport_pdf()
     QString outputPath = appDataPath + "/output_image.png";
     outputPixmap.save(outputPath, "PNG");
 
+    reportInfoDialog.setClinicalNotes(clinicalNotes->toPlainText().trimmed());
     if (reportInfoDialog.exec() == QDialog::Accepted) {
-        QString clinicName = reportInfoDialog.getClinicianName();
-        QString patientName = reportInfoDialog.getClinicalNotes();
+        clinicianName = reportInfoDialog.getClinicianName();
+        clinicalNotes->setText(reportInfoDialog.getClinicalNotes());
     }
     else {
         return;
@@ -852,6 +854,7 @@ void MainWindow::generateReport_pdf()
     htmlContent.replace("PLACEHOLDER_DIAGNOSIS", tumourNameLabel->text().trimmed());
     htmlContent.replace("PLACEHOLDER_CONFIDENCE", confidenceValueLabel->text().trimmed());
     htmlContent.replace("PLACEHOLDER_SEVERITY", severityLabel->text());
+    htmlContent.replace("PLACEHOLDER_CLINICAN", clinicianName);
 
 
     QTextDocument document;
