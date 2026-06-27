@@ -14,6 +14,7 @@
         <file>bin.png</file>
         <file>hourglass.png</file>
         <file>checked.png</file>
+        <file>SOLIS-logo.png</file>
         <file>report_template.html</file>
     </qresource>
 </RCC>

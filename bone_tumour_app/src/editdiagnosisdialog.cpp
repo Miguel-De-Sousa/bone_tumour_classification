@@ -1,6 +1,7 @@
 #include "editdiagnosisdialog.h"
 #include <QFormLayout>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QFrame>
@@ -14,7 +15,7 @@ EditDiagnosisDialog::EditDiagnosisDialog(QWidget *parent) : QDialog(parent) {
     mainLayout->setSpacing(16);
     mainLayout->setContentsMargins(24, 24, 24, 24);
 
-    QLabel *titleLabel = new QLabel(tr("Edit Report Information"), this);
+    QLabel *titleLabel = new QLabel(tr("<img src=':/edit.png' height='20' width='20'> Edit Report Information"), this);
     titleLabel->setAlignment(Qt::AlignCenter);
     titleLabel->setObjectName("TitleLabel");
     mainLayout->addWidget(titleLabel);
@@ -36,7 +37,12 @@ EditDiagnosisDialog::EditDiagnosisDialog(QWidget *parent) : QDialog(parent) {
     IdInput->setObjectName("InputField");
     IdInput->setPlaceholderText("000-000-0000");
     IdInput->setInputMask("000-000-0000;-");
+    formLayout->addRow(IdLabel, IdInput);
 
+    QLabel *viewLabel = new QLabel(tr("Scan View"), this);
+    viewLabel->setObjectName("FieldLabel");
+
+    QHBoxLayout *viewLayout = new QHBoxLayout();
     Frontview = new QRadioButton(tr("Front"));
     Frontview->setObjectName("InputField");
     Frontview->setCursor(Qt::PointingHandCursor);
@@ -46,20 +52,21 @@ EditDiagnosisDialog::EditDiagnosisDialog(QWidget *parent) : QDialog(parent) {
     Lateralview->setObjectName("InputField");
     Lateralview->setCursor(Qt::PointingHandCursor);
 
-    QLabel *tumourNameTitle = new QLabel(tr("Tumour Category"));
+    viewLayout->addWidget(Frontview);
+    viewLayout->addWidget(Lateralview);
+    viewLayout->addStretch(); 
+    formLayout->addRow(viewLabel, viewLayout);
+
+    QLabel *tumourNameTitle = new QLabel(tr("Tumour Category"), this);
     tumourNameTitle->setObjectName("FieldLabel");
     tumourNameInput = new QLineEdit();
     tumourNameInput->setObjectName("InputField");
+    formLayout->addRow(tumourNameTitle, tumourNameInput);
 
-    QLabel *severityTitle = new QLabel(tr("Case Severity"));
+    QLabel *severityTitle = new QLabel(tr("Case Severity"), this);
     severityTitle->setObjectName("FieldLabel");
     severityInput = new QLineEdit();
     severityInput->setObjectName("InputField");
-    
-
-    formLayout->addRow(IdLabel, IdInput);
-    formLayout->addRow(Frontview, Lateralview);
-    formLayout->addRow(tumourNameTitle, tumourNameInput);
     formLayout->addRow(severityTitle, severityInput);
     
     mainLayout->addLayout(formLayout);
@@ -110,4 +117,25 @@ QString EditDiagnosisDialog::getNewDiagnosis() const {
 
 QString EditDiagnosisDialog::getNewSeverity() const {
     return severityInput->text().trimmed();
+}
+
+void EditDiagnosisDialog::setId(const QString &id) {
+    IdInput->setText(id);
+}
+
+void EditDiagnosisDialog::setDiagnosis(const QString &className) {
+    tumourNameInput->setText(className);
+}
+
+void EditDiagnosisDialog::setSeverity(const QString &severity) {
+    severityInput->setText(severity);
+}
+
+void EditDiagnosisDialog::setView(const QString &scanView) {
+    if (scanView == "Front") {
+        Frontview->setChecked(true);
+    }
+    else {
+        Lateralview->setChecked(true);
+    }
 }

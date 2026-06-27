@@ -777,7 +777,24 @@ void MainWindow::lastPatient_ID()
 
 void MainWindow::editDiagnosis_clicked()
 {
+    editDiagnosisDialog.setId(patientId);
+    editDiagnosisDialog.setDiagnosis(tumourNameLabel->text().trimmed());
+    editDiagnosisDialog.setSeverity(severityLabel->text().trimmed());
+    editDiagnosisDialog.setView(scanView);
     editDiagnosisDialog.exec();
+
+    IdInput->setText(editDiagnosisDialog.getNewId());
+    scanView = editDiagnosisDialog.getNewView();
+    if (scanView == "Front") {
+        Frontview->setChecked(true);
+    }
+    else {
+        Lateralview->setChecked(true);
+    }
+    analyseButton_clicked();
+
+    severityLabel->setText(editDiagnosisDialog.getNewSeverity());
+    tumourNameLabel->setText(editDiagnosisDialog.getNewDiagnosis());
 }
 void MainWindow::generateReport_pdf()
 {

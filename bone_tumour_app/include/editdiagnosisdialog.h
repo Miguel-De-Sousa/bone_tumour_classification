@@ -17,6 +17,11 @@ public:
     QString getNewView() const;
     QString getNewDiagnosis() const;
     QString getNewSeverity() const;
+    void setId(const QString &id);
+    void setView(const QString &scanView);
+    void setDiagnosis(const QString &className);
+    void setSeverity(const QString &severity);
+
 
 private:
     QLineEdit *IdInput;

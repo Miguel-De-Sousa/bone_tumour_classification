@@ -17,7 +17,7 @@ ReportInfoDialog::ReportInfoDialog(QWidget *parent) : QDialog(parent) {
     mainLayout->setSpacing(16);
     mainLayout->setContentsMargins(24, 24, 24, 24);
 
-    QLabel *titleLabel = new QLabel(tr("Generate PDF Report"), this);
+    QLabel *titleLabel = new QLabel(tr("<img src=':/report.png' height='20' width='20'> Generate PDF Report"), this);
     titleLabel->setAlignment(Qt::AlignCenter);
     titleLabel->setObjectName("TitleLabel");
     mainLayout->addWidget(titleLabel);
