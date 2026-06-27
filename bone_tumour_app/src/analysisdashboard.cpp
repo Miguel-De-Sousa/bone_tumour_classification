@@ -39,7 +39,8 @@ void MainWindow::setupComponents()
     imageStageRouter->addItem("Preview Zone");
     imageStageRouter->setFixedSize(0, 0);
 
-    titleLabel = new QLabel("X-Ray Analysis Suite");
+    titleLabel = new QLabel();
+    titleLabel->setPixmap(QPixmap(":/SOLIS-xray.png").scaledToWidth(250, Qt::SmoothTransformation));
     titleLabel->setObjectName("TitleLabel");
     titleLabel->setAlignment(Qt::AlignCenter);
 
@@ -148,7 +149,7 @@ void MainWindow::setupComponents()
     Frontview = new QRadioButton("Front");
     Frontview->setObjectName("InputField");
     Frontview->setCursor(Qt::PointingHandCursor);
-    Frontview->setChecked(true);
+
     Lateralview = new QRadioButton("Lateral");
     Lateralview->setObjectName("InputField");
     Lateralview->setCursor(Qt::PointingHandCursor);
@@ -354,7 +355,6 @@ void MainWindow::setupLayouts()
     statusLayout->setContentsMargins(15, 15, 15, 15);
     statusLayout->setSpacing(8);
     statusLayout->addWidget(titleLabel);
-    statusLayout->addSpacing(20);
     statusLayout->addWidget(separatorTitlePage1);
     statusLayout->addWidget(statusTitle);
     statusLayout->addWidget(modelLabel);
