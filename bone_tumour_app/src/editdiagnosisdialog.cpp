@@ -35,8 +35,8 @@ EditDiagnosisDialog::EditDiagnosisDialog(QWidget *parent) : QDialog(parent) {
 
     IdInput = new QLineEdit();
     IdInput->setObjectName("InputField");
-    IdInput->setPlaceholderText("000-000-0000");
-    IdInput->setInputMask("000-000-0000;-");
+    IdInput->setPlaceholderText(" Enter 10 Digit Patient ID");
+    IdInput->setInputMask("0000000000; ");
     formLayout->addRow(IdLabel, IdInput);
 
     QLabel *viewLabel = new QLabel(tr("Scan View"), this);

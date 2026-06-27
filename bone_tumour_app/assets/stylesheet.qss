@@ -1,15 +1,23 @@
-QMainWindow, QWidget#centralWidget {
+QMainWindow, QWidget#centralWidget, QDialog {
     background-color: #0F1115;
     color: #E2E8F0;
     font-family: ".AppleSystemUIFont", -apple-system, Roboto, sans-serif;
 }
 
-QLabel#TitleLabel {
-    font-family: ".AppleSystemUIFont", "Helvetica Neue", Arial, sans-serif;
-    font-size: 26px;
-    font-weight: bold; 
-    color: #FFFFFF; 
-    padding-bottom: 8px;
+QWidget#page1Sidebar, QWidget#page2Sidebar {
+    background-color: #171A21;
+}
+
+QFrame#Card, QFrame#ResultsPanel, QFrame#ActionsPanel {
+    background-color: transparent;
+    border: none;
+}
+
+QFrame#SidebarDivider {
+    background-color: #262B36;
+    max-height: 1px;
+    border: none;
+    margin: 10px 0px;
 }
 
 QFrame#DropZone {
@@ -29,13 +37,12 @@ QFrame#DetectionZone {
     border-radius: 8px;
 } 
 
-QWidget#page1Sidebar, QWidget#page2Sidebar {
-    background-color: #171A21;
-}
-
-QFrame#Card, QFrame#ResultsPanel, QFrame#ActionsPanel {
-    background-color: transparent;
-    border: none;
+QLabel#TitleLabel {
+    font-family: ".AppleSystemUIFont", "Helvetica Neue", Arial, sans-serif;
+    font-size: 26px;
+    font-weight: bold; 
+    color: #FFFFFF; 
+    padding-bottom: 8px;
 }
 
 QLabel#CardTitle, QPushButton#CardTitle {
@@ -97,7 +104,7 @@ QRadioButton#InputField::indicator:checked {
     background-color: #1E222B;
 }
 
-QPushButton#AnalyseButton {
+QPushButton#AnalyseButton, QPushButton#CloseButton {
     background-color: #0068FF;
     color: #FFFFFF;
     font-size: 13px;
@@ -107,7 +114,7 @@ QPushButton#AnalyseButton {
     padding: 10px 24px;
 }
 
-QPushButton#AnalyseButton:hover {
+QPushButton#AnalyseButton:hover, QPushButton#CloseButton:hover {
     background-color: #1A75FF;
 }
 
@@ -121,7 +128,7 @@ QPushButton#AnalyseButton:disabled {
     border: 1px solid #262B36;
 }
 
-QPushButton#ActionButton, #ApproveButton {
+QPushButton#ActionButton, QPushButton#ApproveButton {
     background-color: #202530;
     border: 1px solid #333B4C;
     color: #E2E8F0;
@@ -131,12 +138,12 @@ QPushButton#ActionButton, #ApproveButton {
     padding: 10px 24px;
 }
 
-QPushButton#ActionButton:hover, #ApproveButton:hover {
+QPushButton#ActionButton:hover, QPushButton#ApproveButton:hover {
     background-color: #2C3342;
     border-color: #475569;
 }
 
-QPushButton#ActionButton:clicked, #ApproveButton:clicked{
+QPushButton#ActionButton:clicked, QPushButton#ApproveButton:clicked {
     background-color: #1A1F29;
 }
 
@@ -144,18 +151,6 @@ QPushButton#ActionButton:disabled {
     background-color: #1E222B;
     color: #475569;
     border: 1px solid #262B36;
-}
-
-QPushButton#ApproveButton:checked {
-    background-color: rgba(42, 157, 143, 0.15); 
-    border: 1px solid #2A9D8F;            
-    color: #2A9D8F;
-}
-
-QPushButton#ApproveButton:checked:hover {
-    background-color: rgba(42, 157, 143, 0.25);
-    border-color: #35BFA2;
-    color: #35BFA2;
 }
 
 QPushButton#InfoButton {
@@ -171,54 +166,73 @@ QPushButton#InfoButton:hover {
     color: #E2E8F0;
 }
 
+QPushButton#TestButton, QPushButton#PreviousButton {
+    background-color: transparent;
+    border: none;
+    margin: 0px;
+    padding: 6px 8px;
+    color: #94A3B8; 
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+}
+
+QPushButton#TestButton:hover, QPushButton#PreviousButton:hover {
+    color: #FFFFFF;
+    background-color: rgba(255, 255, 255, 0.05); 
+    border-radius: 4px;
+}
+
+QPushButton#TestButton:pressed, QPushButton#PreviousButton:pressed {
+    color: #E2E8F0;
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+QPushButton#TestButton:disabled, QPushButton#PreviousButton:disabled {
+    background-color: transparent;
+    border: none;
+    margin: 0px;
+    padding: 6px 8px;
+    color: #475569; 
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+}
+
+QPushButton#ApproveButton:checked {
+    background-color: rgba(42, 157, 143, 0.15); 
+    border: 1px solid #2A9D8F;            
+    color: #2A9D8F;
+}
+
+QPushButton#ApproveButton:checked:hover {
+    background-color: rgba(42, 157, 143, 0.25);
+    border-color: #2C3342;;
+    color: #E2E8F0;
+}
+
 QProgressBar#ConfidenceBar {
-    border: 1px solid #2A2A32;
-    background-color: #121216;
+    border: 1px solid #1E293B;
+    background-color: #0B0D11;
     border-radius: 4px;
     height: 8px;
 }
 
-QProgressBar#ConfidenceBar::chunk {
-    background-color: #0068FF;
-    border-radius: 4px;
+QProgressBar#ConfidenceBar::chunk { 
+    background-color: #0068FF; 
+    border-radius: 4px; 
 }
 
-QProgressBar#ConfidenceBar[status="Malignant"]::chunk {
-    background-color: #E63946;
-    border-radius: 4px;
+QProgressBar#ConfidenceBar[status="Malignant"]::chunk { 
+    background-color: #E63946; 
 }
 
-QProgressBar#ConfidenceBar[status="Local-Aggressive"]::chunk {
-    background-color: #FFB703;
-    border-radius: 4px;
+QProgressBar#ConfidenceBar[status="Local-Aggressive"]::chunk { 
+    background-color: #FFB703; 
 }
 
-QProgressBar#ConfidenceBar[status="Benign"]::chunk {
-    background-color: #2A9D8F;
-    border-radius: 4px;
-}
-
-QFrame#SidebarDivider {
-    background-color: #262B36;
-    max-height: 1px;
-    border: none;
-    margin: 10px 0px;
-}
-
-QMessageBox#InfoMessageBox {
-    background-color: #171A21;
-}
-
-QPushButton#CloseButton {
-    background-color: #0068FF;
-    color: #FFFFFF;
-    font-weight: bold;
-    border-radius: 6px;
-    font-size: 13px;
-}
-
-QPushButton#CloseButton:hover {
-    background-color: #1A75FF;
+QProgressBar#ConfidenceBar[status="Benign"]::chunk { 
+    background-color: #2A9D8F; 
 }
 
 QLabel#SeverityLabel {   
@@ -230,65 +244,26 @@ QLabel#SeverityLabel {
     color: #FFFFFF;      
 }
 
-QLabel#SeverityLabel[status="Malignant"]{
+QLabel#SeverityLabel[status="Malignant"] {
     background-color: rgba(230, 57, 70, 0.06);
     border: 1px solid #E63946;
 }
 
-QLabel#SeverityLabel[status="Local-Aggressive"]{
+QLabel#SeverityLabel[status="Local-Aggressive"] {
     background-color: rgba(255, 183, 3, 0.05);                             
     border: 1px solid #FFB703;
 }
 
-QLabel#SeverityLabel[status="Benign"]{
+QLabel#SeverityLabel[status="Benign"] {
     background-color: rgba(42, 157, 143, 0.06);                            
     border: 1px solid #2A9D8F;
 }
 
-QLabel#SeverityLabel[status="None"]{
+QLabel#SeverityLabel[status="None"] {
     background-color: rgba(0, 104, 255, 0.06);
     border: 1px solid #0068FF; 
 }
 
-QPushButton#TestButton, 
-QPushButton#PreviousButton {
-    background-color: transparent;
-    border: none;
-    margin: 0px;
-    padding: 6px 8px;
-    color: #a0aec0; 
-    font-size: 13px;
-    font-weight: 500;
-    text-align: left;
-}
-
-QPushButton#TestButton:hover, 
-QPushButton#PreviousButton:hover {
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.05); 
-    border-radius: 4px;
-}
-
-QPushButton#TestButton:pressed, 
-QPushButton#PreviousButton:pressed {
-    color: #d1d5db;
-    background-color: rgba(255, 255, 255, 0.02);
-}
-
-QPushButton#TestButton:disabled, 
-QPushButton#PreviousButton:disabled {
-    background-color: transparent;
-    border: none;
-    margin: 0px;
-    padding: 6px 8px;
-    color: #475569; 
-    font-size: 13px;
-    font-weight: 500;
-    text-align: left;
-}
-
-QDialog {
-    background-color: #0F1115;
-    color: #E2E8F0;
-    font-family: ".AppleSystemUIFont", -apple-system, Roboto, sans-serif;
+QMessageBox#InfoMessageBox {
+    background-color: #171A21;
 }

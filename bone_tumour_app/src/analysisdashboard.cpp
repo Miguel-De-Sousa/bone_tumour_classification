@@ -135,15 +135,15 @@ void MainWindow::setupComponents()
     detailTitle = new QLabel("PRE-ANALYSIS CONTEXT");
     detailTitle->setObjectName("CardTitle");
     
-    IdLabel = new QLabel("<sup style = 'color: #ff0000;'>*</sup> Patient ID");
+    IdLabel = new QLabel("<sup style = 'color: #ff0000; font-size: 18px;'>*</sup>Patient ID");
     IdLabel->setObjectName("FieldLabel");
     
     IdInput = new QLineEdit();
     IdInput->setObjectName("InputField");
-    IdInput->setPlaceholderText("000-000-0000");
-    IdInput->setInputMask("000-000-0000;-");
+    IdInput->setPlaceholderText(" Enter 10 Digit Patient ID");
+    IdInput->setInputMask("0000000000; ");
     
-    viewLabel = new QLabel("<sup style = 'color: #ff0000;'>*</sup> Scan View");
+    viewLabel = new QLabel("<sup style = 'color: #ff0000; font-size: 18px;'>*</sup>Scan View");
     viewLabel->setObjectName("FieldLabel");
 
     Frontview = new QRadioButton("Front");
@@ -290,7 +290,7 @@ void MainWindow::setupComponents()
     verificationCard = new QFrame();
     verificationCard->setObjectName("Card");
 
-    verificationTitle = new QLabel("<sup style = 'color: #ff0000;'>*</sup> CLINICAN VERIFICATION");
+    verificationTitle = new QLabel("<sup style = 'color: #ff0000; font-size: 18px;'>*</sup>CLINICAN VERIFICATION");
     verificationTitle->setObjectName("CardTitle");
 
     approveButton = new QPushButton("Approve");
