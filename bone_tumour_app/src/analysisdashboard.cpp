@@ -797,6 +797,7 @@ void MainWindow::editDiagnosis_clicked()
     severityLabel->setText(editDiagnosisDialog.getNewSeverity());
     tumourNameLabel->setText(editDiagnosisDialog.getNewDiagnosis());
 }
+
 void MainWindow::generateReport_pdf()
 {
     QString appDir = QCoreApplication::applicationDirPath();
