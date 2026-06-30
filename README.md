@@ -6,7 +6,7 @@
 ## 🎬 See It In Action
 
 <p align="center">
-  <video src="./bone_tumour_app/assets/demo.mp4" width="100%" controls muted>
+  <video src="https://github.com/user-attachments/assets/c1721b14-b1a6-4295-884b-3b6d12df118b" width="100%" controls muted>
     Your browser does not support the video tag.
   </video>
   <br />
