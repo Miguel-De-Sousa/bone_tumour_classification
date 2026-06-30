@@ -5,7 +5,8 @@
 >
 > ## 🎬 See It In Action
 >
-> ![Application Demo](./assets/demo.gif)
+> ![Application Demo](./bone_tumour_app/assets/demo.gif)
+> 
 > *An example of the Qt GUI dashboard performing real-time inference using the exported ONNX model.*
 >
 > ---
